@@ -18,6 +18,7 @@ ZillionCoin is a new cryptocurrency which is more decentralized than Bitcoin. It
  - No year 2106 problem
  
  Port: 41682
+ 
  RPC-Port: 41681
 
 License
