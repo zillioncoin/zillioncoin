@@ -16,6 +16,9 @@ ZillionCoin is a new cryptocurrency which is more decentralized than Bitcoin. It
  - Block reward is smoothly halved every 4 years
  - Total supply: 200 mln coins
  - No year 2106 problem
+ 
+ Port: 41682
+ RPC-Port: 41681
 
 License
 -------
