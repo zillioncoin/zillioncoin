@@ -3,7 +3,7 @@ ZillionCoin integration/staging tree
 
 http://zillioncoin.info
 
-Copyright (c) 2009-2014 The developers
+Copyright (c) 2009-2017 The developers
 
 What is ZillionCoin?
 ----------------
@@ -12,9 +12,9 @@ ZillionCoin is a new cryptocurrency which is more decentralized than Bitcoin. It
  - Algorithm: SpreadX11
  - Block generation: 1 minute
  - Difficulty retargets: every block based on last 360 blocks
- - Reward starts at approx. 6.66 coins per block
+ - Reward starts at approx. 66.66 coins per block
  - Block reward is smoothly halved every 4 years
- - Total supply: 20 mln coins
+ - Total supply: 200 mln coins
  - No year 2106 problem
 
 License
