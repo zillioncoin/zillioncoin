@@ -1,7 +1,7 @@
 ZillionCoin integration/staging tree
 ================================
 
-http://zillioncoin.info
+http://zillioncoin.org
 
 Copyright (c) 2009-2017 The developers
 
