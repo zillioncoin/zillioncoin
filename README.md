@@ -8,7 +8,7 @@ Copyright (c) 2009-2018 The developers
 What is ZillionCoin?
 ----------------
 
-ZillionCoin is a new cryptocurrency which is more decentralized than Bitcoin. It prevents centralization of hashing power in pools, which is one of the main concerns of Bitcoin security. ZillionCoin was fairly launched with no premine.
+ZillionCoin is a new cryptocurrency which is more decentralized than Bitcoin (and other Cryptocurrencies). It prevents centralization of hashing power in pools, which is one of the main concerns of Bitcoin security. ZillionCoin was fairly launched with no premine.
  - Algorithm: SpreadX11
  - Block generation: 1 minute
  - Difficulty retargets: every block based on last 360 blocks
