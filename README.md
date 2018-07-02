@@ -3,7 +3,7 @@ ZillionCoin integration/staging tree
 
 http://zillioncoin.org
 
-Copyright (c) 2009-2017 The developers
+Copyright (c) 2009-2018 The developers
 
 What is ZillionCoin?
 ----------------
