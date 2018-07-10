@@ -250,14 +250,18 @@ QString MarketCapPage::formatNumber(QString number)
 
 void MarketCapPage::replyFinished(QNetworkReply *reply)
 {
-    /*QByteArray data = reply->readAll();
+    //QByteArray data = reply->readAll();
 
-    qDebug() << "orka" << data.size();
+    /*qDebug() << "orka" << data.size();
     QString str_raw = data.toStdString().c_str();
-    qDebug() << str_raw;
+    qDebug() << str_raw;*/
 
-    */
+
+
+
     QString jsonString = QString::fromUtf8(reply->readAll()).simplified();
+
+    //qDebug() << "jsonString" << jsonString;
 
 
 
@@ -270,6 +274,8 @@ void MarketCapPage::replyFinished(QNetworkReply *reply)
     qDebug() << "sort_section" << sort_section;
     qDebug() << "sort_order" << sort_order;
 
+
+    qDebug() << "jsonObj.count()" << jsonObj.count();
 
     current_selected_row = ui->tableWidget->currentRow();
     qDebug() << "current item" << ui->tableWidget->currentRow();//ui->tableWidget->currentItem()->row();
@@ -456,7 +462,9 @@ void MarketCapPage::replyFinished(QNetworkReply *reply)
 
 
 
-    emit sendTickerData(stringListForTicker);
+    if(jsonObj.count() >0){
+        emit sendTickerData(stringListForTicker);
+    }
 
     ui->tableWidget->sortByColumn(sort_section,sort_order);
 

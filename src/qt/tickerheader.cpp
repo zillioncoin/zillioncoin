@@ -57,7 +57,7 @@ TickerHeader::TickerHeader(QWidget *parent) : QWidget(parent)
     base_pixmap.fill(bg_color);//transparent);
 
 
-    pixmap = QPixmap(8000,20);
+    pixmap = QPixmap(4500,20);
     pixmap.fill(bg_color);
 
     //QPainter p(&base_pixmap);
@@ -223,7 +223,7 @@ void TickerHeader::setTickerData(QList<QString> stringList)
 
     p2.setRenderHint(QPainter::HighQualityAntialiasing);
     for(int i=0;i<8000;i+=current_width_of_banner){
-        p2.drawPixmap(new_offset_x+i,0,8000,20,pixmap);
+        p2.drawPixmap(new_offset_x+i,0,4500,20,pixmap);
     }
     p2.end();
 
