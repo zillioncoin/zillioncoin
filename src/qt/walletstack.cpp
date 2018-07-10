@@ -138,6 +138,13 @@ void WalletStack::gotoSignMessageTab(QString addr)
     if (walletView) walletView->gotoSignMessageTab(addr);
 }
 
+void WalletStack::gotoMarketCapPage()
+{
+    QMap<QString, WalletView*>::const_iterator i;
+    for (i = mapWalletViews.constBegin(); i != mapWalletViews.constEnd(); ++i)
+        i.value()->gotoMarketCapPage();
+}
+
 void WalletStack::gotoVerifyMessageTab(QString addr)
 {
     WalletView *walletView = (WalletView*)currentWidget();

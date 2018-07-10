@@ -18,6 +18,8 @@
 #include <QScrollBar>
 #include <QClipboard>
 
+#include "pixmapeffect.h"
+
 SendCoinsDialog::SendCoinsDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SendCoinsDialog),
@@ -41,7 +43,13 @@ SendCoinsDialog::SendCoinsDialog(QWidget *parent) :
     connect(ui->clearButton, SIGNAL(clicked()), this, SLOT(clear()));
 
     // Coin Control
+
+
     ui->lineEditCoinControlChange->setFont(GUIUtil::bitcoinAddressFont());
+
+    //Tint effect
+    //ui->pushButtonCoinControl->setIcon(PixmapEffect::tint(ui->pushButtonCoinControl->icon().pixmap(ui->pushButtonCoinControl->icon().availableSizes().first()),0xda8d21));
+
     connect(ui->pushButtonCoinControl, SIGNAL(clicked()), this, SLOT(coinControlButtonClicked()));
     connect(ui->checkBoxCoinControlChange, SIGNAL(stateChanged(int)), this, SLOT(coinControlChangeChecked(int)));
     connect(ui->lineEditCoinControlChange, SIGNAL(textEdited(const QString &)), this, SLOT(coinControlChangeEdited(const QString &)));
@@ -479,7 +487,7 @@ void SendCoinsDialog::coinControlChangeEdited(const QString & text)
         else if (!CBitcoinAddress(text.toStdString()).IsValid())
         {
             ui->labelCoinControlChangeLabel->setStyleSheet("QLabel{color:red;}");
-            ui->labelCoinControlChangeLabel->setText(tr("Warning: Invalid Bitcoin address"));
+            ui->labelCoinControlChangeLabel->setText(tr("Warning: Invalid ZillionCoin address"));
         }
         else
         {

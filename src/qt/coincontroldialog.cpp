@@ -22,6 +22,7 @@
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 
+
 using namespace std;
 QList<qint64> CoinControlDialog::payAmounts;
 CCoinControl* CoinControlDialog::coinControl = new CCoinControl();

@@ -23,14 +23,14 @@ USE_UPNP = -
 
 win32:{
     BOOST_LIB_SUFFIX=-mgw49-mt-s-1_57
-    BOOST_INCLUDE_PATH=C:/deps/boost_1_57_0
-    BOOST_LIB_PATH=C:/deps/boost_1_57_0/stage/lib
-    BDB_INCLUDE_PATH=C:/deps/db-4.8.30.NC/build_unix
-    BDB_LIB_PATH=C:/deps/db-4.8.30.NC/build_unix
-    OPENSSL_INCLUDE_PATH=C:/deps/openssl/include
-    OPENSSL_LIB_PATH=C:/deps/openssl
-    MINIUPNPC_INCLUDE_PATH=C:/deps/miniupnpc
-    MINIUPNPC_LIB_PATH=C:/deps/miniupnpc
+    BOOST_INCLUDE_PATH=D:/deps/boost_1_57_0
+    BOOST_LIB_PATH=D:/deps/boost_1_57_0/stage/lib
+    BDB_INCLUDE_PATH=D:/deps/db-4.8.30.NC/build_unix
+    BDB_LIB_PATH=D:/deps/db-4.8.30.NC/build_unix
+    OPENSSL_INCLUDE_PATH=D:/deps/openssl/include
+    OPENSSL_LIB_PATH=D:/deps/openssl
+    MINIUPNPC_INCLUDE_PATH=D:/deps/miniupnpc
+    MINIUPNPC_LIB_PATH=D:/deps/miniupnpc
 }
 
 OBJECTS_DIR = build
@@ -261,7 +261,11 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/vanitygenwork.h \
     src/qt/vanity_avl.h \
     src/qt/vanity_pattern.h \
-    src/qt/vanity_util.h
+    src/qt/vanity_util.h \
+    src/qt/advancedwidget.h \
+    src/qt/pixmapeffect.h \
+    src/qt/qgraphicstinteffect.h \
+    src/qt/marketcappage.h
 
 SOURCES += src/qt/bitcoin.cpp \
     src/qt/bitcoingui.cpp \
@@ -353,7 +357,11 @@ SOURCES += src/qt/bitcoin.cpp \
     src/qt/vanitygenwork.cpp \
     src/qt/vanity_pattern.cpp \
     src/qt/vanity_util.cpp \
-    src/sphlib/aes_helper.c
+    src/sphlib/aes_helper.c \
+    src/qt/advancedwidget.cpp \
+    src/qt/pixmapeffect.cpp \
+    src/qt/qgraphicstinteffect.cpp \
+    src/qt/marketcappage.cpp
 
 RESOURCES += src/qt/bitcoin.qrc
 
@@ -372,7 +380,8 @@ FORMS += src/qt/forms/sendcoinsdialog.ui \
     src/qt/forms/blockexplorer.ui \
     src/qt/forms/miningpage.ui \
     src/qt/forms/mininginfopage.ui \
-    src/qt/forms/vanitygenpage.ui
+    src/qt/forms/vanitygenpage.ui \
+    src/qt/forms/marketcappage.ui
 
 contains(USE_QRCODE, 1) {
 HEADERS += src/qt/qrcodedialog.h

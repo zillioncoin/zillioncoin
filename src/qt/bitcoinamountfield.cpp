@@ -17,12 +17,55 @@ BitcoinAmountField::BitcoinAmountField(QWidget *parent):
     amount->setLocale(QLocale::c());
     amount->setDecimals(8);
     amount->installEventFilter(this);
-    amount->setMaximumWidth(170);
+    amount->setMaximumWidth(250);
     amount->setSingleStep(0.001);
+
+
 
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->addWidget(amount);
     unit = new QValueComboBox(this);
+    unit->setStyleSheet("height:30px; font: normal 13px \"Open Sans\";");
+
+//    unit->setStyleSheet("QComboBox {\
+//                        border: 1px solid gray;\
+//                        border-radius: 3px;\
+//                        padding: 1px 18px 1px 3px;\
+//                        min-width: 6em;\
+//                    }\
+//                    QComboBox:editable {\
+//                        background: white;\
+//                    }\
+//                    QComboBox:!editable, QComboBox::drop-down:editable {\
+//                         background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\
+//                                                     stop: 0 #E1E1E1, stop: 0.4 #DDDDDD,\
+//                                                     stop: 0.5 #D8D8D8, stop: 1.0 #D3D3D3);\
+//                    }\
+//                    QComboBox:!editable:on, QComboBox::drop-down:editable:on {\
+//                        background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\
+//                                                    stop: 0 #D3D3D3, stop: 0.4 #D8D8D8,\
+//                                                    stop: 0.5 #DDDDDD, stop: 1.0 #E1E1E1);\
+//                    }\
+//                    QComboBox:on { /* shift the text when the popup opens */\
+//                        padding-top: 3px;\
+//                        padding-left: 4px;\
+//                    }\
+//                    QComboBox::drop-down {\
+//                        subcontrol-origin: padding;\
+//                        subcontrol-position: top right;\
+//                        width: 15px;\
+//                        border-left-width: 1px;\
+//                        border-left-color: darkgray;\
+//                        border-left-style: solid; /* just a single line */\
+//                        border-top-right-radius: 3px; /* same radius as the QComboBox */\
+//                        border-bottom-right-radius: 3px;\
+//                    }\
+//                    QComboBox QAbstractItemView {\
+//                        border: 2px solid darkgray;\
+//                        selection-background-color: lightgray;\
+//                    }");
+
+
     unit->setModel(new BitcoinUnits(this));
     layout->addWidget(unit);
     layout->addStretch(1);
@@ -71,7 +114,8 @@ bool BitcoinAmountField::validate()
 void BitcoinAmountField::setValid(bool valid)
 {
     if (valid)
-        amount->setStyleSheet("");
+        //amount->setStyleSheet("");
+        amount->setStyleSheet(".QDoubleSpinBox{height:30px; font: normal 13px \"Open Sans\"; padding-left:5px;}");
     else
         amount->setStyleSheet(STYLE_INVALID);
 }

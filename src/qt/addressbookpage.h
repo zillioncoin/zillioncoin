@@ -41,6 +41,8 @@ public:
     void setOptionsModel(OptionsModel *optionsModel);
     const QString &getReturnValue() const { return returnValue; }
 
+    void setContentMarginsForPopup();
+
 public slots:
     void done(int retval);
 

@@ -13,18 +13,36 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QFrame#SendCoinsEntry{background-color:#66ffffff;}</string>
+  </property>
   <property name="frameShape">
-   <enum>QFrame::StyledPanel</enum>
+   <enum>QFrame::NoFrame</enum>
   </property>
   <property name="frameShadow">
-   <enum>QFrame::Sunken</enum>
+   <enum>QFrame::Plain</enum>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>20</number>
+   </property>
+   <property name="topMargin">
+    <number>20</number>
+   </property>
+   <property name="rightMargin">
+    <number>20</number>
+   </property>
+   <property name="bottomMargin">
+    <number>20</number>
+   </property>
    <property name="spacing">
     <number>12</number>
    </property>
    <item row="5" column="0">
     <widget class="QLabel" name="label">
+     <property name="styleSheet">
+      <string notr="true">font: bold;</string>
+     </property>
      <property name="text">
       <string>A&amp;mount:</string>
      </property>
@@ -38,6 +56,9 @@
    </item>
    <item row="3" column="0">
     <widget class="QLabel" name="label_2">
+     <property name="styleSheet">
+      <string notr="true">font: bold;</string>
+     </property>
      <property name="text">
       <string>Pay &amp;To:</string>
      </property>
@@ -50,10 +71,17 @@
     </widget>
    </item>
    <item row="5" column="1">
-    <widget class="BitcoinAmountField" name="payAmount"/>
+    <widget class="BitcoinAmountField" name="payAmount">
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+    </widget>
    </item>
    <item row="4" column="0">
     <widget class="QLabel" name="label_4">
+     <property name="styleSheet">
+      <string notr="true">font: bold;</string>
+     </property>
      <property name="text">
       <string>&amp;Label:</string>
      </property>
@@ -72,6 +100,18 @@
      </property>
      <item>
       <widget class="QValidatedLineEdit" name="payTo">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="toolTip">
         <string>The address to send the payment to (e.g. ZiLLionUe4bEh16VLa5YcAPkdgiftBUcbb)</string>
        </property>
@@ -79,6 +119,22 @@
         <number>34</number>
        </property>
       </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>10</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
      </item>
      <item>
       <widget class="QToolButton" name="addressBookButton">
@@ -90,7 +146,7 @@
        </property>
        <property name="icon">
         <iconset resource="../bitcoin.qrc">
-         <normaloff>:/icons/address-book</normaloff>:/icons/address-book</iconset>
+         <normaloff>:/icons/addressbook</normaloff>:/icons/addressbook</iconset>
        </property>
        <property name="shortcut">
         <string>Alt+A</string>
@@ -107,7 +163,7 @@
        </property>
        <property name="icon">
         <iconset resource="../bitcoin.qrc">
-         <normaloff>:/icons/editpaste</normaloff>:/icons/editpaste</iconset>
+         <normaloff>:/icons/editcopy</normaloff>:/icons/editcopy</iconset>
        </property>
        <property name="shortcut">
         <string>Alt+P</string>
@@ -135,21 +191,24 @@
      <property name="toolTip">
       <string>Enter a label for this address to add it to your address book</string>
      </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
     </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
+   <class>QValidatedLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>qvalidatedlineedit.h</header>
+  </customwidget>
+  <customwidget>
    <class>BitcoinAmountField</class>
    <extends>QLineEdit</extends>
    <header>bitcoinamountfield.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>QValidatedLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>qvalidatedlineedit.h</header>
   </customwidget>
  </customwidgets>
  <resources>

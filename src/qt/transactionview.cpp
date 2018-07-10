@@ -33,6 +33,12 @@ TransactionView::TransactionView(QWidget *parent) :
     // Build filter row
     setContentsMargins(0,0,0,0);
 
+    bg_widget = new QWidget(this);
+    bg_widget->setObjectName("widget");
+    bg_widget->setStyleSheet("QWidget#widget{background-color:#4dffffff;border:none;}");
+    bg_widget->resize(400,400);
+    bg_widget->adjustSize();
+
     QHBoxLayout *hlayout = new QHBoxLayout();
     hlayout->setContentsMargins(0,0,0,0);
 #ifdef Q_OS_MAC
@@ -41,7 +47,7 @@ TransactionView::TransactionView(QWidget *parent) :
 #else
     hlayout->setSpacing(0);
     hlayout->addSpacing(23);
-#endif
+#endif    
 
     dateWidget = new QComboBox(this);
 #ifdef Q_OS_MAC
@@ -97,7 +103,7 @@ TransactionView::TransactionView(QWidget *parent) :
     hlayout->addWidget(amountWidget);
 
     QVBoxLayout *vlayout = new QVBoxLayout(this);
-    vlayout->setContentsMargins(0,0,0,0);
+    vlayout->setContentsMargins(20,20,20,20);
     vlayout->setSpacing(0);
 
     QTableView *view = new QTableView(this);
@@ -150,6 +156,11 @@ TransactionView::TransactionView(QWidget *parent) :
     connect(copyTxIDAction, SIGNAL(triggered()), this, SLOT(copyTxID()));
     connect(editLabelAction, SIGNAL(triggered()), this, SLOT(editLabel()));
     connect(showDetailsAction, SIGNAL(triggered()), this, SLOT(showDetails()));
+}
+
+void TransactionView::resizeEvent(QResizeEvent *event)
+{
+    bg_widget->resize(this->width(),this->height());
 }
 
 void TransactionView::setModel(WalletModel *model)

@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Blockchain Explorer</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
@@ -27,7 +30,7 @@
         </property>
         <property name="icon">
          <iconset resource="../bitcoin.qrc">
-          <normaloff>:/icons/back</normaloff>:/icons/back</iconset>
+          <normaloff>:/icons/backward</normaloff>:/icons/backward</iconset>
         </property>
         <property name="flat">
          <bool>false</bool>
@@ -41,7 +44,7 @@
         </property>
         <property name="icon">
          <iconset resource="../bitcoin.qrc">
-          <normaloff>:/icons/send</normaloff>:/icons/send</iconset>
+          <normaloff>:/icons/forward</normaloff>:/icons/forward</iconset>
         </property>
        </widget>
       </item>
@@ -116,8 +119,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>780</width>
-         <height>506</height>
+         <width>778</width>
+         <height>508</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -155,7 +158,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>20</height>
+     <height>18</height>
     </rect>
    </property>
   </widget>

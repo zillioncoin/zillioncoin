@@ -192,6 +192,10 @@ QVariant AddressTableModel::data(const QModelIndex &index, int role) const
     else if (role == Qt::FontRole)
     {
         QFont font;
+        if(index.column() == Label)
+        {
+            font = QFont("Open Sans");//GUIUtil::bitcoinAddressFont();
+        }
         if(index.column() == Address)
         {
             font = GUIUtil::bitcoinAddressFont();

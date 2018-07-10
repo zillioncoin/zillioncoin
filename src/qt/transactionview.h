@@ -26,6 +26,10 @@ class TransactionView : public QWidget
 public:
     explicit TransactionView(QWidget *parent = 0);
 
+    QWidget *bg_widget;
+
+    virtual void resizeEvent(QResizeEvent *event);
+
     void setModel(WalletModel *model);
 
     // Date ranges for filter

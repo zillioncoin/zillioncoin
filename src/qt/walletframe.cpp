@@ -27,7 +27,7 @@ WalletFrame::WalletFrame(BitcoinGUI *_gui) :
 
     walletStack = new WalletStack(this);
     walletStack->setBitcoinGUI(gui);
-    walletStack->setFrameStyle( QFrame::WinPanel | QFrame::Sunken );
+    //walletStack->setFrameStyle( QFrame::WinPanel | QFrame::Sunken );
 
     QLabel *noWallet = new QLabel(tr("No wallet has been loaded."));
     noWallet->setAlignment(Qt::AlignCenter);
@@ -149,6 +149,11 @@ void WalletFrame::gotoMiningPage()
 void WalletFrame::gotoMiningInfoPage()
 {
     walletStack->gotoMiningInfoPage();
+}
+
+void WalletFrame::gotoMarketCapPage()
+{
+    walletStack->gotoMarketCapPage();
 }
 
 void WalletFrame::gotoSignMessageTab(QString addr)

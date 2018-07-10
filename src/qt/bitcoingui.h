@@ -23,6 +23,7 @@ class BlockExplorer;
 class MiningInfoPage;
 class MiningPage;
 class GuiHeader;
+class TickerHeader;
 
 class CWallet;
 
@@ -38,6 +39,10 @@ class QAction;
 class QToolButton;
 class QTabWidget;
 QT_END_NAMESPACE
+
+
+#include "advancedwidget.h"
+
 
 /**
   Bitcoin GUI main class. This class represents the main window of the Bitcoin UI. It communicates with both the client and
@@ -78,14 +83,48 @@ public:
     QAction * getMiningInfoAction() { return miningInfoAction; }
     QAction * getMiningAction() { return miningAction; }
 
-    QToolButton *getSendCoinsButton(){ return sendCoinsButton; }
+    /*QToolButton *getSendCoinsButton(){ return sendCoinsButton; }
     QToolButton *getReceiveCoinsButton(){ return receiveCoinsButton; }
     QToolButton *getHistoryButton(){ return historyButton; }
     QToolButton *getAddressBookButton(){ return addressBookButton; }
     QToolButton *getVanityGenButton(){ return vanityGenButton; }
 
     QToolButton *getMiningInfoButton(){ return miningInfoButton; }
-    QToolButton *getMiningCPUButton(){ return miningCPUButton; }
+    QToolButton *getMiningCPUButton(){ return miningCPUButton; }*/
+
+    //
+
+    QWidget *sideBarContainer;
+
+    int active_main_menu = 0;
+    int active_main_menu_old = 0;
+
+    /*struct selected_menues{
+        int menu;
+        int sub_menu;
+    };*/
+
+    //selected_menues* selected;
+
+    struct menu_descriptor{
+        QString icon_path;
+        QString title_text;
+        QString tooltip_text;
+    };
+
+    QVector<menu_descriptor> mainMenuIdentifier;
+    QVector<QVector<menu_descriptor> > subMenuIdentifier;
+
+    QList<AdvancedWidget*> mainMenu;
+    QList<QLabel*> mainMenuIconLabel;
+    QList<QLabel*> mainMenuTextLabel;
+
+    AdvancedWidget *subMenu[3][10];
+    QLabel *subMenuIconLabel[3][10];
+    QLabel *subMenuTextLabel[3][10];
+
+
+    //
 
     QWidget *categoryContainer;
 
@@ -94,18 +133,19 @@ public:
     QToolButton * miningCategory;
     QToolButton * settingsCategory;
 
-    void setMiningCategoryChecked(bool);
-    void setWalletCategoryChecked(bool);
+    //void setMiningCategoryChecked(bool);
+    //void setWalletCategoryChecked(bool);
 
     QWidget *walletButtonContainer;
     QWidget *miningButtonContainer;
 
     GuiHeader *guiHeader;
+    TickerHeader *tickerHeader;
 
     /** FadeIn/Out Wallet Buttons */
-    void fadeWalletButtons(QString way);
+    //void fadeWalletButtons(QString way);
     /** FadeIn/Out Mining Buttons */
-    void fadeMiningButtons(QString way);
+    //void fadeMiningButtons(QString way);
     /** stretch main ui container depending im subcategories visible or not**/
     void stretchStack();
 
@@ -127,6 +167,7 @@ private:
     WalletFrame *walletFrame;
 
     //QWidget *zillionTabCarrier;
+    QWidget *backGround;
     QTabWidget *zillionTab;
 
     QLabel *labelEncryptionIcon;
@@ -158,8 +199,8 @@ private:
     QAction *openBlockExplorerAction;
 
 
-    QFrame *separatorLineLeft;
-    QFrame *separatorLineBottom;
+    //QFrame *separatorLineLeft;
+    //QFrame *separatorLineBottom;
 
     QToolButton *sendCoinsButton;
     QToolButton *receiveCoinsButton;
@@ -188,7 +229,7 @@ private:
     /** Create the main categories. */
     void createCategories();
     /** Create the main UI actions. */
-    void createActions();
+    void createSideBar();
     /** Create the menu bar and sub-menus. */
     void createMenuBar();
     /** Create system tray icon and notification */
@@ -235,6 +276,12 @@ public slots:
     /** Show incoming transaction notification for new transactions. */
     void incomingTransaction(const QString& date, int unit, qint64 amount, const QString& type, const QString& address);
 
+
+    void menuClicked(int index, int index2);
+    void menuRollover(int index, int index2);
+    void menuRollout(int index, int index2);
+
+
     /** Switch to overview (home) page */
     void gotoOverviewPage();
     /** Switch to history (transactions) page */
@@ -251,6 +298,9 @@ public slots:
     void gotoMiningInfoPage();
     /** Switch to mining page */
     void gotoMiningPage();
+
+    /** Switch to marketcap page */
+    void gotoMarketCapPage();
 
     /** Show configuration dialog */
     void optionsClicked();

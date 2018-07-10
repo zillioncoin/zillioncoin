@@ -534,6 +534,12 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: #fff4f4f4;
+border-style: none;
+font: bold 14px;
+padding: 12px;</string>
+     </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>

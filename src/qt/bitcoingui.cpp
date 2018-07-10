@@ -28,6 +28,10 @@
 #include "wallet.h"
 #include "init.h"
 #include "guiheader.h"
+#include "tickerheader.h"
+
+#include "qgraphicstinteffect.h"
+#include "pixmapeffect.h"
 
 #ifdef Q_OS_MAC
 #include "macdockiconhandler.h"
@@ -63,6 +67,8 @@
 
 #include <iostream>
 
+#include <QFontDatabase>
+
 int MENU_OFFSET;
 
 const QString BitcoinGUI::DEFAULT_WALLET = "~Default";
@@ -89,17 +95,114 @@ BitcoinGUI::BitcoinGUI(QWidget *parent) :
     QApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
 #endif
 
+    int id = QFontDatabase::addApplicationFont(":/font/opensans-regular");
+    qDebug() << "id" << id << QFontDatabase::applicationFontFamilies(id).at(0);
+    id = QFontDatabase::addApplicationFont(":/font/opensans-semibold");
+    qDebug() << "id" << id << QFontDatabase::applicationFontFamilies(id).at(0);
+    id = QFontDatabase::addApplicationFont(":/font/opensans-bold");
+    qDebug() << "id" << id << QFontDatabase::applicationFontFamilies(id).at(0);
+
+
+    //    QFontDatabase::addApplicationFontFromData(":/font/OpenSans-Regular.ttf");
+    //    QFontDatabase::addApplicationFontFromData(":/font/OpenSans-Semibold.ttf");
+    //    QFontDatabase::addApplicationFontFromData(":/font/OpenSans-Bold.ttf");
+
+
+
+    /*int id = QFontDatabase::addApplicationFont(":/fonts/monospace.ttf");
+    QString family = QFontDatabase::applicationFontFamilies(id).at(0);
+    QFont monospace(family);
+    */
+
+
     /*zillionTabCarrier = new QWidget(this);
 
     zillionTabCarrier->setFixedSize(1000,800);
 */
+
+    //QCheckBox { font: bold italic large "Times New Roman" }
+
+    setStyleSheet("QPushButton,QDialogButtonBox::Ok{ "
+                  //"background-color: rgba(250,250,250, 128);"
+                  "height:40px;"
+                  "background-color: #fff4f4f4;"
+                  "border-style: solid;"
+                  "border-width: 1px;"
+                  "border-color: #ffb4b4b4;"
+                  "font: bold 16px \"Open Sans Semibold\";"
+                  //"font-weight: 00;"
+                  "margin: 0px;"
+                  "padding-left:10px;"
+                  "padding-right:10px;"
+                  "}"
+
+                  "QPushButton:pressed { "
+                  "height:40px;"
+                  "background-color: #ffdddddd;"
+                  "border-style: none;"
+                  "font: bold 14px;"
+                  "padding: 12px;}"
+
+                  /*"background-color: red;"
+                                "border-style: outset;"
+                                "border-width: 2px;"
+                                "border-radius: 10px;"
+                                "border-color: beige;"
+                                "font: bold 14px;"
+                                "padding: 6px;}"*/
+
+                  "QLabel{font: normal 13px \"Open Sans\";}"
+
+                  "QLineEdit{height:35px;border: none; padding-left:5px;font: normal 13px \"Open Sans\";}"
+                  "QComboBox{height:35px;border: none; padding-left:5px;font: normal 13px \"Open Sans\";}"
+                  "QDoubleSpinBox{height:35px;border: none; padding-left:5px;}"
+
+                  //QLineEdit, QLineEdit:focus {  }
+
+                  "QToolButton{ "
+                                    //"background-color: rgba(250,250,250, 128);"
+                                    "height:33px;"
+                                    "background-color: #fff4f4f4;"
+                                    "border-style: solid;"
+                                    "border-width: 1px;"
+                                    "border-color: #ffb4b4b4;"
+                                    "font: bold 16px \"Open Sans Semibold\";"
+                                    //"font-weight: 00;"
+                                    "margin: 0px;"
+                                    "padding-left:10px;"
+                                    "padding-right:10px;"
+                                    "}"
+
+                  );
+
+    //"min-width: 10em;"
+
+    backGround = new QWidget(this);
+    backGround->setGeometry(0,0,0,0);
+    //backGround->setStyleSheet("background-color: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #6c3d94, stop: 1 #a13469)");
+    backGround->setStyleSheet("background-color: QLinearGradient( x1: 0, y1: 1, x2: 1, y2: 0,"
+                              //" stop: 0 #b4b8ff, stop: 0.1 #b4b8ff, stop: 0.3 #c3a0f2, stop: 0.5 #fae5ea, stop: 0.7 #ffd3e4, stop: 0.9 #fca4c6, stop: 1 #fca4c6)");
+                              //" stop: 0 #FFFFFF, stop: 0.1 #FFFFD5, stop: 0.3 #FFFAAC, stop: 0.5 #F6E093, stop: 0.7 #EDC67A, stop: 0.9 #C4A264, stop: 1 #C4A264)");
+                              //" stop: 0 #8B7641, stop: 0.1 #95954F, stop: 0.3 #D3C378, stop: 0.5 #D3C378, stop: 0.7 #95954F, stop: 0.9 #4A3B24, stop: 1 #493E20)");
+                              //" stop: 0 #f5f6f6, stop: 0.1 #f5f6f6, stop: 0.3 #dbdce2, stop: 0.5 #b8bac6, stop: 0.7 #dddfe3, stop: 0.9 #f5f6f6, stop: 1 #f5f6f6)");
+                              " stop: 0 #b8bac6, stop: 0.1 #b8bac6, stop: 0.3 #dbdce2, stop: 0.5 #f5f6f6, stop: 0.7 #dddfe3, stop: 0.9 #b8bac6, stop: 1 #b8bac6)");
+
+
+    //#b8bac6
+    //dbdce2
+    //fae5ea
+    //dddfe3
+    //fca4c6
+
     zillionTab = new QTabWidget(this);
-    zillionTab->addTab(new QWidget(), QIcon(":/icons/wallet2"), "   Wallet");
-    zillionTab->addTab(new QWidget(), QIcon(":/icons/mining2"), "   Mining");
-    zillionTab->setIconSize(QSize(32,32));
+    //zillionTab->addTab(new QWidget(), QIcon(":/icons/wallet2"), "   Wallet");
+    //zillionTab->addTab(new QWidget(), QIcon(":/icons/mining2"), "   Mining");
+    //zillionTab->setIconSize(QSize(32,32));
     zillionTab->setStyleSheet("QTabBar::tab { font-weight:bold; width:105px; }");
 
     connect(zillionTab, SIGNAL(tabBarClicked(int)), this, SLOT(whichTabWasClicked(int)));
+
+    zillionTab->setVisible(false);
 
 
 
@@ -108,6 +211,9 @@ BitcoinGUI::BitcoinGUI(QWidget *parent) :
     //setCentralWidget(walletFrame);
     walletFrame->setMinimumWidth(800);
     walletFrame->setMinimumHeight(500);
+    //walletFrame->setStyleSheet("WalletFrame#walletFrame{background-color:white;}");
+
+    //setStyleSheet("background-color:white;");
 
 
     // Accept D&D of URIs
@@ -124,15 +230,23 @@ BitcoinGUI::BitcoinGUI(QWidget *parent) :
 
     // Create actions for the toolbar, menu bar and tray/dock icon
     // Needs walletFrame to be initialized
-    createActions();
+
+    sideBarContainer = new QWidget(this);
+    sideBarContainer->setMinimumWidth(220);
+    sideBarContainer->setMinimumHeight(500);
+
+    createSideBar();
 
     guiHeader->raise();
+    tickerHeader->raise();
 
     // Create system tray icon and notification
     createTrayIcon();
 
     // Create status bar
     statusBar();
+
+    //statusBar()->->setStyleSheet("background-color:#4dffffff;");
 
     // Status bar notification icons
     QFrame *frameBlocks = new QFrame();
@@ -189,8 +303,9 @@ BitcoinGUI::BitcoinGUI(QWidget *parent) :
     setWalletActionsEnabled(false);
 
 
-    zillionTab->move(4,4+120+MENU_OFFSET);
-    walletFrame->move(4,4+120+MENU_OFFSET+90);
+    zillionTab->move(4,4+120+20+MENU_OFFSET);
+    walletFrame->move(180+4,4+160+20+MENU_OFFSET);//+90);
+    sideBarContainer->move(0,-10+4+160+20+MENU_OFFSET);//+90);
 }
 
 BitcoinGUI::~BitcoinGUI()
@@ -207,117 +322,169 @@ BitcoinGUI::~BitcoinGUI()
 void BitcoinGUI::createHeader()
 {
     guiHeader = new GuiHeader(this);
-    guiHeader->move(0,MENU_OFFSET);
+    guiHeader->move(0,20+MENU_OFFSET);
 
-    /*separatorLineLeft = new QFrame(this);
-    separatorLineLeft->setFixedSize(2,3000);
-    separatorLineLeft->move(93,120+walletFrame->y());
-    separatorLineLeft->setFrameShape(QFrame::VLine);
-    separatorLineLeft->setFrameShadow(QFrame::Sunken);*/
-
-    separatorLineBottom = new QFrame(this);
-    separatorLineBottom->setFixedSize(3000,2);
-    separatorLineBottom->setFrameShape(QFrame::HLine);
-    separatorLineBottom->setFrameShadow(QFrame::Sunken);
+    tickerHeader = new TickerHeader(this);
+    tickerHeader->move(0,MENU_OFFSET);
 }
 
 void BitcoinGUI::createCategories()
 {
-    /*categoryContainer = new QWidget(this);
-    categoryContainer->setFixedSize(10,1000);
-    categoryContainer->move(4,120+MENU_OFFSET);
-    categoryContainer->setVisible(false);
-
-    overviewCategory = new QToolButton(categoryContainer);
-    overviewCategory->setFixedSize(84,70);
-    overviewCategory->move(0,5);
-    overviewCategory->setText("&Overview");
-    overviewCategory->setStatusTip("Show general overview");
-    overviewCategory->setToolTip(overviewCategory->statusTip());
-    overviewCategory->setShortcut(QKeySequence(Qt::ALT + Qt::Key_1));
-    overviewCategory->setAutoExclusive(true);
-    overviewCategory->setCheckable(true);
-    overviewCategory->setChecked(true);
-
-    connect(overviewCategory, SIGNAL(clicked()), this, SLOT(showNormalIfMinimized()));
-    connect(overviewCategory, SIGNAL(clicked()), this, SLOT(gotoOverviewPage()));
-
-    walletCategory = new QToolButton(categoryContainer);
-    walletCategory->setFixedSize(84,70);
-    walletCategory->move(0,5+70+2);
-    walletCategory->setText("Wallet");
-    walletCategory->setStatusTip("Show all wallet functions");
-    walletCategory->setToolTip(walletCategory->statusTip());
-    //walletCategory->setShortcut(QKeySequence(Qt::ALT + Qt::Key_2));
-    walletCategory->setAutoExclusive(true);
-    walletCategory->setCheckable(true);
-    //walletCategory->setChecked(true);
-    connect(walletCategory, SIGNAL(clicked()), this, SLOT(gotoSendCoinsPage()));
-
-
-    miningCategory = new QToolButton(categoryContainer);
-    miningCategory->setFixedSize(84,70);
-    miningCategory->move(0,5+70+2+70+2);
-    miningCategory->setText("Mining");
-    miningCategory->setStatusTip("Everything mining related");
-    miningCategory->setToolTip(miningCategory->statusTip());
-    //miningCategory->setShortcut(QKeySequence(Qt::ALT + Qt::Key_2));
-    miningCategory->setAutoExclusive(true);
-    miningCategory->setCheckable(true);
-    connect(miningCategory, SIGNAL(clicked()), this, SLOT(gotoMiningInfoPage()));
-
-    settingsCategory = new QToolButton(categoryContainer);
-    settingsCategory->setFixedSize(84,70);
-    settingsCategory->move(0,5+70+2+70+2+70+2);
-    settingsCategory->setText("Settings");
-    settingsCategory->setStatusTip("Settings and Configurations");
-    settingsCategory->setToolTip(settingsCategory->statusTip());
-    connect(settingsCategory, SIGNAL(clicked()), this, SLOT(optionsClicked()));
-
-    overviewCategory->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    walletCategory->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    miningCategory->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    settingsCategory->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-
-    overviewCategory->setCursor(Qt::PointingHandCursor);
-    walletCategory->setCursor(Qt::PointingHandCursor);
-    miningCategory->setCursor(Qt::PointingHandCursor);
-    settingsCategory->setCursor(Qt::PointingHandCursor);
-
-    overviewCategory->setIconSize(QSize(48,48));
-    walletCategory->setIconSize(QSize(48,48));
-    miningCategory->setIconSize(QSize(48,48));
-    settingsCategory->setIconSize(QSize(48,48));
-
-
-    overviewCategory->setStyleSheet("QToolButton{ padding-top:43px; background: url(:/icons/home) top center no-repeat; background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fefbf6, stop: 1 #d7d5d0); border: 1px solid #98958f; border-radius: 10px;}"
-                                    "QToolButton:hover,QToolButton:checked{ padding-top:43px; background: url(:/icons/home) top center no-repeat; background-color: #FFFFFF; border: 1px solid #98958f; border-radius: 10px;}"
-                                    "QToolButton:checked{color:#000000; font:bold; background: url(:/icons/home2) top center no-repeat; background-color: #C3C0BB; border: 1px solid #3F3F3F;}");
-    walletCategory->setStyleSheet("QToolButton{ padding-top:43px; background: url(:/icons/wallet) top center no-repeat; background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fefbf6, stop: 1 #d7d5d0); border: 1px solid #98958f; border-radius: 10px;}"
-                                  "QToolButton:hover,QToolButton:checked{ padding-top:43px; background: url(:/icons/wallet) top center no-repeat; background-color: #FFFFFF; border: 1px solid #98958f; border-radius: 10px;}"
-                                  "QToolButton:checked{color:#000000; font:bold; background: url(:/icons/wallet2) top center no-repeat; background-color: #C3C0BB; border: 1px solid #3F3F3F;}");
-    miningCategory->setStyleSheet("QToolButton{ padding-top:43px; background: url(:/icons/mining) top center no-repeat; background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fefbf6, stop: 1 #d7d5d0); border: 1px solid #98958f; border-radius: 10px;}"
-                                  "QToolButton:hover,QToolButton:checked{ padding-top:43px; background: url(:/icons/mining) top center no-repeat; background-color: #FFFFFF; border: 1px solid #98958f; border-radius: 10px;}"
-                                  "QToolButton:checked{color:#000000; font:bold; background: url(:/icons/mining2) top center no-repeat; background-color: #C3C0BB; border: 1px solid #3F3F3F;}");
-    settingsCategory->setStyleSheet("QToolButton{ padding-top:43px; background: url(:/icons/settings) top center no-repeat; background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fefbf6, stop: 1 #d7d5d0); border: 1px solid #98958f; border-radius: 10px;}"
-                                    "QToolButton:hover,QToolButton:checked{ padding-top:43px; background: url(:/icons/settings) top center no-repeat; background-color: #FFFFFF; border: 1px solid #98958f; border-radius: 10px;}"
-                                    "QToolButton:checked{color:#000000; font:bold; background: url(:/icons/settings2) top center no-repeat; background-color: #C3C0BB; border: 1px solid #3F3F3F;}");
-*/
-
 
 }
 
-void BitcoinGUI::createActions()
+void BitcoinGUI::createSideBar()
 {
-    QString styleSheetToolButtonNormal = "QToolButton{ padding-top:0px; background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fefbf6, stop: 1 #d7d5d0); border: 1px solid #98958f; border-radius: 5px;}";
+
+    for(int i = 0;i<3;i++){
+        QVector<menu_descriptor> tempVector;
+        subMenuIdentifier.append(tempVector);
+    }
+
+    mainMenuIdentifier.append({":/icons/wallet","WALLET"});
+    mainMenuIdentifier.append({":/icons/mining","MINING"});
+    mainMenuIdentifier.append({":/icons/market","MARKET"});
+
+    subMenuIdentifier[0].append({":/icons/send","SEND COINS",tr("Send coins to a ZillionCoin address")});
+    subMenuIdentifier[0].append({":/icons/receive","RECEIVE COINS",tr("Show the list of addresses for receiving payments")});
+    subMenuIdentifier[0].append({":/icons/transactions","TRANSACTIONS",tr("Browse transaction history")});
+    subMenuIdentifier[0].append({":/icons/addressbook","ADDRESS BOOK",tr("Edit the list of stored addresses and labels")});
+    subMenuIdentifier[0].append({":/icons/vanitygen","VANITY GEN",tr("Create your own vanity addresses")});
+    subMenuIdentifier[0].append({":/icons/backup","BACKUP WALLET",tr("Quickly save a backup file of your wallet")});
+
+    subMenuIdentifier[1].append({":/icons/mininginfo","MINING INFO",tr("Mining Information")});
+    subMenuIdentifier[1].append({":/icons/cpu","CPU MINER",tr("Mine ZillionCoins with your CPU")});
+
+    subMenuIdentifier[2].append({":/icons/marketcap","MARKETCAP"});
+
+
+    int offset_y = 10;//4+160+MENU_OFFSET;
+
+    int offset_y_orig = offset_y;
+
+    QPixmap pix;
+
+    for(int i = 0;i<mainMenuIdentifier.length();i++){
+
+        mainMenu.append(new AdvancedWidget(sideBarContainer));
+        mainMenu[i]->setProperty("index", i);
+        mainMenu[i]->setProperty("index2", -1);
+        mainMenu[i]->resize(180,50);
+        mainMenu[i]->setColor(0xda8d21);
+        mainMenu[i]->setChecked(true);
+        mainMenu[i]->move(0,offset_y);
+
+        connect(mainMenu[i],SIGNAL(released(int,int)),this,SLOT(menuClicked(int,int)));
+
+        mainMenuIconLabel.append(new QLabel(mainMenu[i]));
+        pix = QPixmap(mainMenuIdentifier[i].icon_path);
+        pix = PixmapEffect::tint(pix,0xFFFFFF);
+        mainMenuIconLabel[i]->setPixmap( pix.scaled(32,32,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+        mainMenuIconLabel[i]->setAttribute( Qt::WA_TransparentForMouseEvents );
+        mainMenuIconLabel[i]->adjustSize();
+        mainMenuIconLabel[i]->move(15,9);
+
+        mainMenuTextLabel.append(new QLabel(mainMenu[i]));
+        mainMenuTextLabel[i]->setFixedHeight(50);
+        mainMenuTextLabel[i]->move(60,0);
+        mainMenuTextLabel[i]->setContentsMargins(0,0,0,0);
+        mainMenuTextLabel[i]->setAttribute( Qt::WA_TransparentForMouseEvents );
+
+        mainMenuTextLabel[i]->setStyleSheet(".QLabel{color:#FFFFFF; font: bold 22px \"Open Sans\";}");
+        mainMenuTextLabel[i]->setText(mainMenuIdentifier[i].title_text);
+        mainMenuTextLabel[i]->setAlignment(Qt::AlignVCenter);
+
+        offset_y += 50 + 10;
+
+        for(int i2 = 0; i2<subMenuIdentifier[i].length();i2++){
+            subMenu[i][i2] = new AdvancedWidget(sideBarContainer);
+            subMenu[i][i2]->setProperty("index", i);
+            subMenu[i][i2]->setProperty("index2", i2);
+            subMenu[i][i2]->resize(180,35);
+
+            subMenu[i][i2]->setColor(0xFFFFFF);
+            subMenu[i][i2]->setChecked(false);
+
+            subMenu[i][i2]->fadeTo(0,0,0);
+
+            if(i == active_main_menu){
+                subMenu[i][i2]->move(0,offset_y_orig+60+i*60+i2*35);
+            } else{
+                subMenu[i][i2]->move(-200,offset_y_orig+60+i*60+i2*35);
+            }
+
+            subMenu[i][i2]->setStatusTip(subMenuIdentifier[i][i2].tooltip_text);//;
+            subMenu[i][i2]->setToolTip(subMenu[i][i2]->statusTip());
+
+            connect(subMenu[i][i2],SIGNAL(released(int,int)),this,SLOT(menuClicked(int,int)));
+            connect(subMenu[i][i2],SIGNAL(rollover(int,int)),this,SLOT(menuRollover(int,int)));
+            connect(subMenu[i][i2],SIGNAL(rollout(int,int)),this,SLOT(menuRollout(int,int)));
+
+            subMenuIconLabel[i][i2] = new QLabel(subMenu[i][i2]);
+            pix = QPixmap(subMenuIdentifier[i][i2].icon_path);
+            pix = PixmapEffect::tint(pix,0x1F1F1F);
+            subMenuIconLabel[i][i2]->setPixmap( pix.scaled(16,16,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+            subMenuIconLabel[i][i2]->setAttribute( Qt::WA_TransparentForMouseEvents );
+            subMenuIconLabel[i][i2]->adjustSize();
+            subMenuIconLabel[i][i2]->move(21,10);
+
+            subMenuTextLabel[i][i2] = new QLabel(subMenu[i][i2]);
+            subMenuTextLabel[i][i2]->setFixedHeight(35);
+            subMenuTextLabel[i][i2]->move(50,0);
+            subMenuTextLabel[i][i2]->setContentsMargins(0,0,0,0);
+            subMenuTextLabel[i][i2]->setAttribute( Qt::WA_TransparentForMouseEvents );
+
+            subMenuTextLabel[i][i2]->setText(subMenuIdentifier[i][i2].title_text);
+            subMenuTextLabel[i][i2]->setStyleSheet(".QLabel{color:#1F1F1F; font: bold 14px \"Open Sans\";}");
+            subMenuTextLabel[i][i2]->setAlignment(Qt::AlignVCenter);
+
+            if(i == active_main_menu){
+                offset_y += 35;
+            }
+        }
+
+        if(i == active_main_menu){
+            if(subMenuIdentifier[i].length() >= 1){
+                offset_y += 10;
+            }
+        }
+    }
+
+    //subMenu[1][0]->setColor(0xFF00FF);
+    //subMenu[2][0]->setColor(0xFFFF00);
+
+    //subMenu[0][0]->setStatusTip(tr("Send coins to a ZillionCoin address"));
+    //subMenu[0][0]->setToolTip(subMenu[0][0]->statusTip());
+
+    for(int i = 0;i<mainMenuIdentifier.length();i++){
+        mainMenu[i]->raise();
+        mainMenuTextLabel[i]->adjustSize();
+        for(int i2 = 0;i2<subMenuIdentifier[i].length();i2++){
+            subMenuTextLabel[i][i2]->adjustSize();
+        }
+    }
+
+    menuClicked(0,0);
+
+
+
+
+    //
+    //
+    //
+
+
+
+
+    /*QString styleSheetToolButtonNormal = "QToolButton{ padding-top:0px; background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fefbf6, stop: 1 #d7d5d0); border: 1px solid #98958f; border-radius: 5px;}";
     QString styleSheetToolButtonHover = "QToolButton:hover,QToolButton:checked{ padding-top:0px; background-color: #FFFFFF; border: 1px solid #98958f; border-radius: 5px;}";
     QString styleSheetToolButtonChecked = "QToolButton:checked{color:#000000; background-color: #C3C0BB; border: 1px solid #3F3F3F;}";
 
     walletButtonContainer = new QWidget(this);
     walletButtonContainer->setContentsMargins(0,0,0,0);
-    walletButtonContainer->move(10,125+MENU_OFFSET-50);
+    walletButtonContainer->move(10,125+MENU_OFFSET+45+200);
 
-    QHBoxLayout *walletButtonLayout = new QHBoxLayout();
+    QVBoxLayout *walletButtonLayout = new QVBoxLayout();
 
     QSizePolicy sizePolicyWallet(QSizePolicy::Minimum, QSizePolicy::Minimum);
     sizePolicyWallet.setHorizontalStretch(0);
@@ -387,7 +554,7 @@ void BitcoinGUI::createActions()
     receiveCoinsButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     receiveCoinsButton->setIconSize(QSize(24,24));
     receiveCoinsButton->setCursor(Qt::PointingHandCursor);
-    receiveCoinsButton->setIcon(QIcon(":/icons/receiving_addresses"));
+    //receiveCoinsButton->setIcon(QIcon(":/icons/receiving_addresses"));
 
     historyButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     historyButton->setIconSize(QSize(24,24));
@@ -406,22 +573,8 @@ void BitcoinGUI::createActions()
     walletButtonLayout->addWidget(sendCoinsButton);
     walletButtonLayout->addWidget(receiveCoinsButton);
 
-    QFrame *line2a = new QFrame(walletButtonContainer);
-    line2a->setFixedWidth(2);
-    line2a->setFixedHeight(30);
-    line2a->setFrameShape(QFrame::VLine);
-    line2a->setFrameShadow(QFrame::Sunken);
-    walletButtonLayout->addWidget(line2a);
-
     walletButtonLayout->addWidget(historyButton);
     walletButtonLayout->addWidget(addressBookButton);
-
-    QFrame *line2b = new QFrame(walletButtonContainer);
-    line2b->setFixedWidth(2);
-    line2b->setFixedHeight(30);
-    line2b->setFrameShape(QFrame::VLine);
-    line2b->setFrameShadow(QFrame::Sunken);
-    walletButtonLayout->addWidget(line2b);
 
     walletButtonLayout->addWidget(vanityGenButton);
     walletButtonLayout->setContentsMargins(0, 0, 0, 0);
@@ -433,8 +586,8 @@ void BitcoinGUI::createActions()
 
     walletButtonLayout->addSpacing(1000);//addWidget(line2c,Qt::AlignLeft);
 
-    walletButtonContainer->setFixedWidth(1000);
-    walletButtonContainer->setFixedHeight(35);
+    walletButtonContainer->setFixedWidth(120);
+    walletButtonContainer->setFixedHeight(300);
     walletButtonContainer->setLayout(walletButtonLayout);
 
     sendCoinsButton->setText(" Send coins");
@@ -467,9 +620,9 @@ void BitcoinGUI::createActions()
 
     miningButtonContainer = new QWidget(this);
     miningButtonContainer->setContentsMargins(0,0,0,0);
-    miningButtonContainer->move(10,125+MENU_OFFSET-50);
+    miningButtonContainer->move(10,125+300+MENU_OFFSET+160);
 
-    QHBoxLayout *miningButtonLayout = new QHBoxLayout();
+    QVBoxLayout *miningButtonLayout = new QVBoxLayout();
 
     QSizePolicy sizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     sizePolicy.setHorizontalStretch(0);
@@ -484,6 +637,7 @@ void BitcoinGUI::createActions()
     miningInfoButton->setSizePolicy(sizePolicy);
     miningInfoButton->setAutoExclusive(true);
     miningInfoButton->setCheckable(true);
+
 
     miningCPUButton = new QToolButton(miningButtonContainer);
     miningCPUButton->setStatusTip(tr("Mine ZillionCoins with your CPU"));
@@ -515,8 +669,9 @@ void BitcoinGUI::createActions()
     miningButtonLayout->setContentsMargins(0, 0, 0, 0);
     miningButtonLayout->addStretch();
 
-    miningButtonContainer->setFixedWidth(1000);
-    miningButtonContainer->setFixedHeight(35);
+    miningButtonContainer->setFixedWidth(120);
+    miningButtonContainer->setFixedHeight(120);
+    miningButtonContainer->adjustSize();
     miningButtonContainer->setLayout(miningButtonLayout);
 
     miningInfoButton->setText(" Mining Info");
@@ -529,6 +684,7 @@ void BitcoinGUI::createActions()
     connect(miningCPUButton, SIGNAL(clicked()), this, SLOT(gotoMiningPage()));
 
     gotoSendCoinsPage();
+    */
     //gotoMiningInfoPage();
 }
 
@@ -546,7 +702,7 @@ void BitcoinGUI::createMenuBar()
 
     appMenuBar->raise();
 
-    quitAction = new QAction(QIcon(":/icons/quit"), tr("E&xit"), this);
+    quitAction = new QAction(QIcon(":/menu/quit"), tr("E&xit"), this);
     quitAction->setStatusTip(tr("Quit application"));
     quitAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q));
     quitAction->setMenuRole(QAction::QuitRole);
@@ -565,13 +721,13 @@ void BitcoinGUI::createMenuBar()
     encryptWalletAction = new QAction(QIcon(":/icons/lock_closed"), tr("&Encrypt Wallet..."), this);
     encryptWalletAction->setStatusTip(tr("Encrypt the private keys that belong to your wallet"));
     encryptWalletAction->setCheckable(true);
-    backupWalletAction = new QAction(QIcon(":/icons/filesave"), tr("&Backup Wallet..."), this);
+    backupWalletAction = new QAction(QIcon(":/menu/filesave"), tr("&Backup Wallet..."), this);
     backupWalletAction->setStatusTip(tr("Backup wallet to another location"));
     changePassphraseAction = new QAction(QIcon(":/icons/key"), tr("&Change Passphrase..."), this);
     changePassphraseAction->setStatusTip(tr("Change the passphrase used for wallet encryption"));
-    signMessageAction = new QAction(QIcon(":/icons/edit"), tr("Sign &message..."), this);
+    signMessageAction = new QAction(QIcon(":/menu/sign"), tr("Sign &message..."), this);
     signMessageAction->setStatusTip(tr("Sign messages with your ZillionCoin addresses to prove you own them"));
-    verifyMessageAction = new QAction(QIcon(":/icons/transaction_0"), tr("&Verify message..."), this);
+    verifyMessageAction = new QAction(QIcon(":/menu/verify"), tr("&Verify message..."), this);
     verifyMessageAction->setStatusTip(tr("Verify messages to ensure they were signed with specified ZillionCoin addresses"));
 
     openRPCConsoleAction = new QAction(QIcon(":/icons/console"), tr("&Debug Console"), this);
@@ -801,41 +957,41 @@ void BitcoinGUI::aboutClicked()
     dlg.exec();
 }
 
-void BitcoinGUI::setWalletCategoryChecked(bool state){
+/*void BitcoinGUI::setWalletCategoryChecked(bool state){
     //walletCategory->setChecked(state);
 }
 
 void BitcoinGUI::setMiningCategoryChecked(bool state){
     //miningCategory->setChecked(state);
-}
+}*/
 
-void BitcoinGUI::fadeWalletButtons(QString way)
-{
-    QPropertyAnimation *animation = new QPropertyAnimation(walletButtonContainer, "pos");
-    animation->setDuration(0);
-    animation->setStartValue(QPoint(10, walletButtonContainer->y()));
-    if(way == "in"){
-        animation->setEndValue(QPoint(10,125+MENU_OFFSET+45));
-    } else{
-        animation->setEndValue(QPoint(10,125+MENU_OFFSET-50));
-    }
-    animation->setEasingCurve(QEasingCurve::InCubic);
-    animation->start();
-}
+//void BitcoinGUI::fadeWalletButtons(QString way)
+//{
+//    /*QPropertyAnimation *animation = new QPropertyAnimation(walletButtonContainer, "pos");
+//    animation->setDuration(0);
+//    animation->setStartValue(QPoint(10, walletButtonContainer->y()));
+//    if(way == "in"){
+//        animation->setEndValue(QPoint(10,125+MENU_OFFSET+45));
+//    } else{
+//        animation->setEndValue(QPoint(10,125+MENU_OFFSET-50));
+//    }
+//    animation->setEasingCurve(QEasingCurve::InCubic);
+//    animation->start();*/
+//}
 
-void BitcoinGUI::fadeMiningButtons(QString way)
-{
-    QPropertyAnimation *animation2 = new QPropertyAnimation(miningButtonContainer, "pos");
-    animation2->setDuration(0);
-    animation2->setStartValue(QPoint(10, miningButtonContainer->y()));
-    if(way == "in"){
-        animation2->setEndValue(QPoint(10,125+MENU_OFFSET+45));
-    } else{
-        animation2->setEndValue(QPoint(10,125+MENU_OFFSET-50));
-    }
-    animation2->setEasingCurve(QEasingCurve::InCubic);
-    animation2->start();
-}
+//void BitcoinGUI::fadeMiningButtons(QString way)
+//{
+//    /*QPropertyAnimation *animation2 = new QPropertyAnimation(miningButtonContainer, "pos");
+//    animation2->setDuration(0);
+//    animation2->setStartValue(QPoint(10, miningButtonContainer->y()));
+//    if(way == "in"){
+//        animation2->setEndValue(QPoint(10,125+MENU_OFFSET+45));
+//    } else{
+//        animation2->setEndValue(QPoint(10,125+MENU_OFFSET-50));
+//    }
+//    animation2->setEasingCurve(QEasingCurve::InCubic);
+//    animation2->start();*/
+//}
 
 void BitcoinGUI::stretchStack(){
     /*if(screenId == 0){
@@ -843,8 +999,8 @@ void BitcoinGUI::stretchStack(){
     } else{*/
 
     //walletFrame->stretchStack(10,0,this->width()-10-10,this->height()-10-125-40-40-60);
-    walletFrame->resize(this->width()-20,this->height()-10-125-40-40-50-12);
-    walletFrame->stretchStack(10,0,this->width()-20-10,this->height()-10-125-40-40-50-12);
+    walletFrame->resize(this->width()-10-180-10,this->height()-10-125-40-40-50-12+90-40);
+    walletFrame->stretchStack(10,0,this->width()-10-10-180-10,this->height()-10-125-40-40-50-12+90-40);
     //}
 
 }
@@ -857,8 +1013,8 @@ void BitcoinGUI::externCommand(const QString &command)
 void BitcoinGUI::gotoOverviewPage()
 {
     screenId = 0;
-    fadeWalletButtons("out");
-    fadeMiningButtons("out");
+    //fadeWalletButtons("out");
+    //fadeMiningButtons("out");
     stretchStack();
     if (walletFrame) walletFrame->gotoOverviewPage();
 }
@@ -866,8 +1022,8 @@ void BitcoinGUI::gotoOverviewPage()
 void BitcoinGUI::gotoHistoryPage()
 {
     screenId = 1;
-    fadeWalletButtons("in");
-    fadeMiningButtons("out");
+    //fadeWalletButtons("in");
+    //fadeMiningButtons("out");
     stretchStack();
     if (walletFrame) walletFrame->gotoHistoryPage();
     zillionTab->setCurrentIndex(0);
@@ -876,8 +1032,8 @@ void BitcoinGUI::gotoHistoryPage()
 void BitcoinGUI::gotoAddressBookPage()
 {
     screenId = 1;
-    fadeWalletButtons("in");
-    fadeMiningButtons("out");
+    //fadeWalletButtons("in");
+    //fadeMiningButtons("out");
     stretchStack();
     if (walletFrame) walletFrame->gotoAddressBookPage();
     zillionTab->setCurrentIndex(0);
@@ -886,8 +1042,8 @@ void BitcoinGUI::gotoAddressBookPage()
 void BitcoinGUI::gotoVanityGenPage()
 {
     screenId = 1;
-    fadeWalletButtons("in");
-    fadeMiningButtons("out");
+    //fadeWalletButtons("in");
+    //fadeMiningButtons("out");
     stretchStack();
     if (walletFrame) walletFrame->gotoVanityGenPage();
     zillionTab->setCurrentIndex(0);
@@ -901,8 +1057,8 @@ void BitcoinGUI::gotoReceiveCoinsPage()
 void BitcoinGUI::gotoSendCoinsPage(QString addr)
 {
     screenId = 1;
-    fadeWalletButtons("in");
-    fadeMiningButtons("out");
+    //fadeWalletButtons("in");
+    //fadeMiningButtons("out");
     stretchStack();
     if (walletFrame) walletFrame->gotoSendCoinsPage(addr);
     zillionTab->setCurrentIndex(0);
@@ -921,8 +1077,8 @@ void BitcoinGUI::gotoVerifyMessageTab(QString addr)
 void BitcoinGUI::gotoMiningInfoPage()
 {
     screenId = 2;
-    fadeWalletButtons("out");
-    fadeMiningButtons("in");
+    //fadeWalletButtons("out");
+    //fadeMiningButtons("in");
 
     stretchStack();
     if (walletFrame) walletFrame->gotoMiningInfoPage();
@@ -933,6 +1089,11 @@ void BitcoinGUI::gotoMiningInfoPage()
 void BitcoinGUI::gotoMiningPage()
 {
     if (walletFrame) walletFrame->gotoMiningPage();
+}
+
+void BitcoinGUI::gotoMarketCapPage()
+{
+    if (walletFrame) walletFrame->gotoMarketCapPage();
 }
 
 void BitcoinGUI::setNumConnections(int count)
@@ -1164,6 +1325,7 @@ void BitcoinGUI::incomingTransaction(const QString& date, int unit, qint64 amoun
             .arg(address), CClientUIInterface::MSG_INFORMATION);
 }
 
+
 void BitcoinGUI::dragEnterEvent(QDragEnterEvent *event)
 {
     // Accept only URIs
@@ -1208,17 +1370,21 @@ bool BitcoinGUI::eventFilter(QObject *object, QEvent *event)
 
 void BitcoinGUI::resizeEvent(QResizeEvent *event)
 {
-    guiHeader->resize(this->width());//walletFrame->width());
+    tickerHeader->resize(this->width(),20);
+    guiHeader->resize(this->width());
+
 
     zillionTab->resize(this->width()-8,this->height()-180+3);
 
     //separatorLineLeft->setFixedHeight(walletFrame->y()+walletFrame->height()-120);
-    separatorLineBottom->setFixedWidth(this->width());//walletFrame->width());
-    separatorLineBottom->move(0,zillionTab->y()+zillionTab->height()+5);
+    //separatorLineBottom->setFixedWidth(this->width());//walletFrame->width());
+    //separatorLineBottom->move(0,zillionTab->y()+zillionTab->height()+5);
 
-    walletFrame->resize(this->width()-20,this->height()-10-125-40-40-50-12);
-    walletFrame->stretchStack(10,0,this->width()-20-10,this->height()-10-125-40-40-50-12);
+    walletFrame->resize(this->width()-10-180-10,this->height()-10-125-40-40-50-12+90-40);
+    walletFrame->stretchStack(10,0,this->width()-10-10-180-10,this->height()-10-125-40-40-50-12+90-40);
     //walletFrame->resizeIt();
+
+    backGround->resize(this->width(),this->height());
 
 }
 
@@ -1291,3 +1457,140 @@ void BitcoinGUI::detectShutdown()
     if (ShutdownRequested())
         QMetaObject::invokeMethod(QCoreApplication::instance(), "quit", Qt::QueuedConnection);
 }
+
+
+
+
+
+
+
+void BitcoinGUI::menuClicked(int index, int index2)
+{
+    //qDebug() << "menuClicked" << index << index2;
+
+    QPixmap pix;
+
+    int offset_y = 10;
+
+    active_main_menu = index;
+
+    for(int i = 0;i<mainMenuIdentifier.length();i++){
+        mainMenu[i]->moveTo(0,offset_y,200,100,QEasingCurve::InQuad);
+        offset_y += 50 + 10;
+        if(i == active_main_menu){
+            for(int i2 = 0;i2<subMenuIdentifier[i].length();i2++){
+                //subMenuTextLabel[i][i2]->adjustSize();
+                if(active_main_menu != active_main_menu_old){
+                    subMenu[i][i2]->move(-200,offset_y);
+                    subMenu[i][i2]->moveTo(0,subMenu[i][i2]->y(),200,200+i2*30,QEasingCurve::OutQuad);
+                } else{
+                    subMenu[i][i2]->move(0,offset_y);
+                }
+                offset_y += 35;
+            }
+            if(subMenuIdentifier[i].length() >= 1){
+                offset_y += 10;
+            }
+        } else{
+            for(int i2 = 0;i2<subMenuIdentifier[i].length();i2++){
+                subMenu[i][i2]->moveTo(-200,subMenu[i][i2]->y(),200,((subMenuIdentifier[i].length()-1)*30) -(i2*30),QEasingCurve::InQuad);
+            }
+        }
+    }
+
+    for(int i = 0;i<mainMenuIdentifier.length();i++){
+        for(int i2 = 0;i2<subMenuIdentifier[i].length();i2++){
+            /* qDebug() << i << i2;
+            if(i == index && i2 != index2){
+                qDebug() << "fade this" << i << i2;*/
+            subMenu[i][i2]->setChecked(false);
+            //subMenu[i][i2]->fadeTo(0,100,0);
+            //subMenu[i][i2]->update();
+            pix = QPixmap(subMenuIdentifier[i][i2].icon_path);
+            pix = PixmapEffect::tint(pix,0x1F1F1F);
+            subMenuIconLabel[i][i2]->setPixmap( pix.scaled(16,16,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+            subMenuTextLabel[i][i2]->setStyleSheet(".QLabel{color:#1F1F1F; font: bold 14px \"Open Sans\";}");
+            //}
+        }
+    }
+
+    if(index2 == -1){
+        index2 = 0;
+    }
+
+    if(index2 >= 0){
+        subMenu[index][index2]->setChecked(true);
+        pix = QPixmap(subMenuIdentifier[index][index2].icon_path);
+        pix = PixmapEffect::tint(pix,0xda8d21);
+        subMenuIconLabel[index][index2]->setPixmap( pix.scaled(16,16,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+        subMenuTextLabel[index][index2]->setStyleSheet(".QLabel{color:#da8d21; font: bold 14px \"Open Sans\";}");
+
+        if(index == 0){
+            if(index2 == 0){
+                gotoSendCoinsPage();
+            }
+            if(index2 == 1){
+                gotoReceiveCoinsPage();
+            }
+            if(index2 == 2){
+                gotoHistoryPage();
+            }
+            if(index2 == 3){
+                gotoAddressBookPage();
+            }
+            if(index2 == 4){
+                gotoVanityGenPage();
+            }
+            if(index2 == 5){
+                walletFrame->backupWallet();
+            }
+        }
+
+        if(index == 1){
+            if(index2 == 0){
+                gotoMiningInfoPage();
+            }
+            if(index2 == 1){
+                gotoMiningPage();
+            }
+        }
+
+        if(index == 2){
+            if(index2 == 0){
+                gotoMarketCapPage();
+            }
+        }
+    }
+
+    active_main_menu_old = active_main_menu;
+}
+
+void BitcoinGUI::menuRollover(int index, int index2)
+{
+    QPixmap pix;
+    for(int i2 = 0;i2<subMenuIdentifier[index].length();i2++){
+        pix = QPixmap(subMenuIdentifier[index][i2].icon_path);
+        if(i2 == index2){
+            pix = PixmapEffect::tint(pix,0xda8d21);
+            subMenuIconLabel[index][i2]->setPixmap( pix.scaled(16,16,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+            subMenuTextLabel[index][i2]->setStyleSheet(".QLabel{color:#da8d21; font: bold 14px \"Open Sans\";}");
+        } else{
+            if(!subMenu[index][i2]->checked){
+                pix = PixmapEffect::tint(pix,0x1F1F1F);
+                subMenuIconLabel[index][i2]->setPixmap( pix.scaled(16,16,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+                subMenuTextLabel[index][i2]->setStyleSheet(".QLabel{color:#1F1F1F; font: bold 14px \"Open Sans\";}");
+            }
+        }
+    }
+}
+
+void BitcoinGUI::menuRollout(int index, int index2)
+{
+    if(!subMenu[index][index2]->checked){
+        QPixmap pix = QPixmap(subMenuIdentifier[index][index2].icon_path);
+        pix = PixmapEffect::tint(pix,0x1F1F1F);
+        subMenuIconLabel[index][index2]->setPixmap( pix.scaled(16,16,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+        subMenuTextLabel[index][index2]->setStyleSheet(".QLabel{color:#1F1F1F; font: bold 14px \"Open Sans\";}");
+    }
+}
+

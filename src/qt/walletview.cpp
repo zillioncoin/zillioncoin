@@ -21,6 +21,8 @@
 #include "mininginfopage.h"
 #include "guiheader.h"
 #include "vanitygenpage.h"
+#include "marketcappage.h"
+#include "tickerheader.h"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -47,6 +49,9 @@ WalletView::WalletView(QWidget *parent, BitcoinGUI *_gui):
 
     transactionsPage = new QWidget(this);
     QVBoxLayout *vbox = new QVBoxLayout();
+    vbox->setContentsMargins(0,0,0,0);
+    vbox->setSpacing(10);
+
     QHBoxLayout *hbox_buttons = new QHBoxLayout();
     transactionView = new TransactionView(this);
     vbox->addWidget(transactionView);
@@ -71,6 +76,8 @@ WalletView::WalletView(QWidget *parent, BitcoinGUI *_gui):
     miningPage = new MiningPage(gui);
     miningInfoPage = new MiningInfoPage(gui);
 
+    marketCapPage = new MarketCapPage(gui);
+
     signVerifyMessageDialog = new SignVerifyMessageDialog(gui);
 
     addWidget(overviewPage);
@@ -83,7 +90,13 @@ WalletView::WalletView(QWidget *parent, BitcoinGUI *_gui):
     addWidget(miningPage);
     addWidget(miningInfoPage);
 
+    addWidget(marketCapPage);
+
+    connect(marketCapPage, SIGNAL(sendMarketValues(QString,QString,int)), gui->guiHeader, SLOT(setMarketValues(QString,QString,int)));
+    connect(marketCapPage, SIGNAL(sendTickerData(QList<QString>)), gui->tickerHeader, SLOT(setTickerData(QList<QString>)));
+
     connect(gui->guiHeader, SIGNAL(transactionClicked2(QModelIndex)), this, SLOT(gotoHistoryPage()));
+    connect(gui->guiHeader, SIGNAL(transactionClicked2(QModelIndex)), this, SLOT(refreshHistoryPage()));
     connect(gui->guiHeader, SIGNAL(transactionClicked2(QModelIndex)), transactionView, SLOT(focusTransaction(QModelIndex)));
 
     // Double-clicking on a transaction on the transaction history page shows details
@@ -180,41 +193,43 @@ void WalletView::gotoOverviewPage()
 void WalletView::gotoHistoryPage()
 {
     screenId = 1;
-    gui->setWalletCategoryChecked(true);
-    gui->getHistoryButton()->setChecked(true);
-    gui->fadeWalletButtons("in");
-    gui->fadeMiningButtons("out");
+    //gui->menuClicked(0,2);
+    //gui->setWalletCategoryChecked(true);
+    //gui->getHistoryButton()->setChecked(true);
+    //gui->fadeWalletButtons("in");
+    //gui->fadeMiningButtons("out");
     setCurrentWidget(transactionsPage);
     gui->stretchStack();
+
 }
 
 void WalletView::gotoVanityGenPage()
 {
-    gui->setWalletCategoryChecked(true);
-    gui->getVanityGenButton()->setChecked(true);
+    //gui->setWalletCategoryChecked(true);
+    //gui->getVanityGenButton()->setChecked(true);
     setCurrentWidget(vanityGenPage);
     //
 }
 
 void WalletView::gotoAddressBookPage()
 {
-    gui->setWalletCategoryChecked(true);
-    gui->getAddressBookButton()->setChecked(true);
+    //gui->setWalletCategoryChecked(true);
+    //gui->getAddressBookButton()->setChecked(true);
     setCurrentWidget(addressBookPage);
 }
 
 void WalletView::gotoReceiveCoinsPage()
 {
-    gui->setWalletCategoryChecked(true);
-    gui->getReceiveCoinsButton()->setChecked(true);
+    //gui->setWalletCategoryChecked(true);
+    //gui->getReceiveCoinsButton()->setChecked(true);
     setCurrentWidget(receiveCoinsPage);
     receiveCoinsPage->setModel(walletModel->getAddressTableModel());
 }
 
 void WalletView::gotoSendCoinsPage(QString addr)
 {
-    gui->setWalletCategoryChecked(true);
-    gui->getSendCoinsButton()->setChecked(true);
+    //gui->setWalletCategoryChecked(true);
+    //gui->getSendCoinsButton()->setChecked(true);
     setCurrentWidget(sendCoinsPage);
 
     if (!addr.isEmpty())
@@ -223,16 +238,27 @@ void WalletView::gotoSendCoinsPage(QString addr)
 
 void WalletView::gotoMiningPage()
 {
-    gui->setMiningCategoryChecked(true);
-    gui->getMiningCPUButton()->setChecked(true);
+    //gui->setMiningCategoryChecked(true);
+    //gui->getMiningCPUButton()->setChecked(true);
     setCurrentWidget(miningPage);
 }
 
 void WalletView::gotoMiningInfoPage()
 {
-    gui->setMiningCategoryChecked(true);
-    gui->getMiningInfoButton()->setChecked(true);
+    //gui->setMiningCategoryChecked(true);
+    //gui->getMiningInfoButton()->setChecked(true);
     setCurrentWidget(miningInfoPage);
+}
+
+void WalletView::gotoMarketCapPage()
+{
+    setCurrentWidget(marketCapPage);
+}
+
+void WalletView::refreshHistoryPage()
+{
+    //gui->active_main_menu_old = 0;//active_main_menu
+    gui->menuClicked(0,2);
 }
 
 void WalletView::gotoSignMessageTab(QString addr)

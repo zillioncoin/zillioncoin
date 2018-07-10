@@ -49,6 +49,8 @@ void SendCoinsEntry::on_addressBookButton_clicked()
         return;
     AddressBookPage dlg(AddressBookPage::ForSending, AddressBookPage::SendingTab, this);
     dlg.setModel(model->getAddressTableModel());
+    dlg.setContentMarginsForPopup();
+
     if(dlg.exec())
     {
         ui->payTo->setText(dlg.getReturnValue());

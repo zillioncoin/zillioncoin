@@ -21,6 +21,7 @@ class RPCConsole;
 class MiningPage;
 class MiningInfoPage;
 class VanityGenPage;
+class MarketCapPage;
 
 QT_BEGIN_NAMESPACE
 class QLabel;
@@ -70,6 +71,9 @@ private:
 
     MiningPage *miningPage;
     MiningInfoPage *miningInfoPage;
+
+    MarketCapPage *marketCapPage;
+
     SignVerifyMessageDialog *signVerifyMessageDialog;
 
     TransactionView *transactionView;
@@ -91,6 +95,12 @@ public slots:
     void gotoMiningPage();
     /** Switch to mining info page */
     void gotoMiningInfoPage();
+
+    /** Switch to marketcap page */
+    void gotoMarketCapPage();
+
+    /** Refresh History Page Sidebar Menu */
+    void refreshHistoryPage();
 
     /** Show Sign/Verify Message dialog and switch to sign message tab */
     void gotoSignMessageTab(QString addr = "");

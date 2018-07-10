@@ -110,6 +110,9 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
 
     // Pass through accept action from button box
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+
+    //
+    ui->tableView->setStyleSheet(".QTableView{ selection-background-color: #a1691b;}");
 }
 
 AddressBookPage::~AddressBookPage()
@@ -165,6 +168,17 @@ void AddressBookPage::setModel(AddressTableModel *model)
 void AddressBookPage::setOptionsModel(OptionsModel *optionsModel)
 {
     this->optionsModel = optionsModel;
+}
+
+void AddressBookPage::setContentMarginsForPopup()
+{
+    qDebug()<< "Adjusting for Popup";
+    ui->widget->setStyleSheet("");
+    ui->verticalLayout_2->setContentsMargins(0,0,0,0);
+    ui->verticalLayout_2->update();
+    ui->verticalLayout->setContentsMargins(9,9,9,9);
+    ui->verticalLayout->setSpacing(6);
+    ui->verticalLayout->update();
 }
 
 void AddressBookPage::on_copyAddress_clicked()
