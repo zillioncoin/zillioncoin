@@ -265,7 +265,8 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/advancedwidget.h \
     src/qt/pixmapeffect.h \
     src/qt/qgraphicstinteffect.h \
-    src/qt/marketcappage.h
+    src/qt/marketcappage.h \
+    src/qt/tickerheader.h
 
 SOURCES += src/qt/bitcoin.cpp \
     src/qt/bitcoingui.cpp \
@@ -361,7 +362,8 @@ SOURCES += src/qt/bitcoin.cpp \
     src/qt/advancedwidget.cpp \
     src/qt/pixmapeffect.cpp \
     src/qt/qgraphicstinteffect.cpp \
-    src/qt/marketcappage.cpp
+    src/qt/marketcappage.cpp \
+    src/qt/tickerheader.cpp
 
 RESOURCES += src/qt/bitcoin.qrc
 
