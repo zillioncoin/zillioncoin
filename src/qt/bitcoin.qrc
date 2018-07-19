@@ -68,6 +68,8 @@
         <file alias="export">res/icons/export.png</file>
         <file alias="backward">res/icons/backward.png</file>
         <file alias="forward">res/icons/forward.png</file>
+        <file alias="player_play_button">res/icons/player_play_button.png</file>
+        <file alias="player_stop_button">res/icons/player_stop_button.png</file>
     </qresource>
     <qresource prefix="/images">
         <file alias="about">res/images/about.png</file>
@@ -138,6 +140,7 @@
         <file alias="shadow_edge">res/gui/shadow_edge.png</file>
         <file alias="ticker_red_down">res/gui/ticker_red_down.png</file>
         <file alias="ticker_green_up">res/gui/ticker_red_up.png</file>
+        <file alias="hash_order_bg">res/gui/hash_order_bg.png</file>
     </qresource>
     <qresource prefix="/menu">
         <file alias="quit">res/menu/quit.png</file>

@@ -31,20 +31,86 @@ class CBitcoinAddress;
 
 struct CBlockIndexWorkComparator;
 
+/** Fork height for switchting to ZillionFlux */
+static const int ZILLIONFLUX_FORK_HEIGHT = 490000;
+
+/** The maximum allowed size for a serialized block, in bytes (network rule) */
+static const unsigned int MAX_BLOCK_SIZE_V1 = 200000;                      // 200KB block hard limit
+static const unsigned int MAX_BLOCK_SIZE_V2 = 1000000;                      // 1000KB block hard limit
+
+/** Obsolete: maximum size for mined blocks */
+static const unsigned int MAX_BLOCK_SIZE_GEN_V1 = MAX_BLOCK_SIZE_V1/4;         // 50KB  block soft limit
+static const unsigned int MAX_BLOCK_SIZE_GEN_V2 = MAX_BLOCK_SIZE_V2/4;         // 250KB  block soft limit
+
+/** The maximum allowed number of signature check operations in a block (network rule) */
+static const unsigned int MAX_BLOCK_SIGOPS_V1 = MAX_BLOCK_SIZE_V1/50;
+static const unsigned int MAX_BLOCK_SIGOPS_V2 = MAX_BLOCK_SIZE_V2/50;
+
+/** The maximum number of orphan transactions kept in memory */
+static const unsigned int MAX_ORPHAN_TRANSACTIONS_V1 = MAX_BLOCK_SIZE_V1/100;
+static const unsigned int MAX_ORPHAN_TRANSACTIONS_V2 = MAX_BLOCK_SIZE_V2/100;
+
+static int MAX_BLOCK_SIZE_FOR_HEIGHT(int height){
+    if(height<ZILLIONFLUX_FORK_HEIGHT){
+        return MAX_BLOCK_SIZE_V1;
+    }
+    if(height>=ZILLIONFLUX_FORK_HEIGHT){
+        return MAX_BLOCK_SIZE_V2;
+    }
+}
+
+static int MAX_BLOCK_SIZE_GEN_FOR_HEIGHT(int height){
+    if(height<ZILLIONFLUX_FORK_HEIGHT){
+        return MAX_BLOCK_SIZE_GEN_V1;
+    }
+    if(height>=ZILLIONFLUX_FORK_HEIGHT){
+        return MAX_BLOCK_SIZE_GEN_V2;
+    }
+}
+
+static int MAX_BLOCK_SIGOPS_FOR_HEIGHT(int height){
+    if(height<ZILLIONFLUX_FORK_HEIGHT){
+        return MAX_BLOCK_SIGOPS_V1;
+    }
+    if(height>=ZILLIONFLUX_FORK_HEIGHT){
+        return MAX_BLOCK_SIGOPS_V2;
+    }
+}
+
+static int MAX_ORPHAN_TRANSACTIONS_FOR_HEIGHT(int height){
+    if(height<ZILLIONFLUX_FORK_HEIGHT){
+        return MAX_ORPHAN_TRANSACTIONS_V1;
+    }
+    if(height>=ZILLIONFLUX_FORK_HEIGHT){
+        return MAX_ORPHAN_TRANSACTIONS_V2;
+    }
+}
+//replaced:
+//Default for -blockmaxsize, maximum size for mined blocks
+//static const unsigned int DEFAULT_BLOCK_MAX_SIZE = MAX_BLOCK_SIZE;
+
+
+//TEMP. delete soon:
+
 /** The maximum allowed size for a serialized block, in bytes (network rule) */
 static const unsigned int MAX_BLOCK_SIZE = 200000;                      // 200KB block hard limit
-/** Obsolete: maximum size for mined blocks */
-static const unsigned int MAX_BLOCK_SIZE_GEN = MAX_BLOCK_SIZE/4;         // 50KB  block soft limit
-/** Default for -blockmaxsize, maximum size for mined blocks **/
-static const unsigned int DEFAULT_BLOCK_MAX_SIZE = MAX_BLOCK_SIZE;
-/** Default for -blockprioritysize, maximum space for zero/low-fee transactions **/
-static const unsigned int DEFAULT_BLOCK_PRIORITY_SIZE = 17000;
-/** The maximum size for transactions we're willing to relay/mine */
-static const unsigned int MAX_STANDARD_TX_SIZE = 100000;
+
 /** The maximum allowed number of signature check operations in a block (network rule) */
 static const unsigned int MAX_BLOCK_SIGOPS = MAX_BLOCK_SIZE/50;
 /** The maximum number of orphan transactions kept in memory */
 static const unsigned int MAX_ORPHAN_TRANSACTIONS = MAX_BLOCK_SIZE/100;
+
+
+
+//Keep this for all max_block_sizes:
+/** Default for -blockprioritysize, maximum space for zero/low-fee transactions **/
+static const unsigned int DEFAULT_BLOCK_PRIORITY_SIZE = 17000;
+
+//Keep this for all max_block_sizes:
+/** The maximum size for transactions we're willing to relay/mine */
+static const unsigned int MAX_STANDARD_TX_SIZE = 100000;
+
+
 /** The maximum number of entries in an 'inv' protocol message */
 static const unsigned int MAX_INV_SZ = 50000;
 /** The maximum size of a blk?????.dat file (since 0.8) */
@@ -1283,7 +1349,8 @@ public:
 
     // extract the matching txid's represented by this partial merkle tree.
     // returns the merkle root, or 0 in case of failure
-    uint256 ExtractMatches(std::vector<uint256> &vMatch);
+    //NEW: disabled, is only used in unit-test
+    //uint256 ExtractMatches(std::vector<uint256> &vMatch);
 };
 
 class CMinerSignature
@@ -1459,11 +1526,14 @@ public:
     // Hash used for proof-of-work
     uint256 GetPoWHash() const;
 
-    // Serialized block data used for PoK hashing
-    void GetPoKData(CBufferStream<MAX_BLOCK_SIZE> &BlockData) const;
+    // Serialized block data used for PoK Versions hashing
+    void GetPoKData_V1(CBufferStream<MAX_BLOCK_SIZE_V1> &BlockData) const;
+    void GetPoKData_V2(CBufferStream<MAX_BLOCK_SIZE_V2> &BlockData) const;
 
     // Compute wholeBlockHash
-    static uint256 HashPoKData(const CBufferStream<MAX_BLOCK_SIZE> &PoKData);
+    static uint256 HashPoKData_V1(const CBufferStream<MAX_BLOCK_SIZE_V1> &PoKData);
+    static uint256 HashPoKData_V2(const CBufferStream<MAX_BLOCK_SIZE_V2> &PoKData);
+
 
     // Check whether a block satisfies the proof-of-work requirement specified by nBits
     bool CheckProofOfWork() const;

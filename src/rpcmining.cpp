@@ -266,20 +266,71 @@ Value getwork(const Array& params, bool fHelp)
         std::string pmr  = prefixToWidth(Signer.GetPMR() , 64, '0');
         std::string prk  = prefixToWidth(Signer.GetPRK() , 64, '0');
 
-        CBufferStream<185> header = pblock->SerializeHeaderForHash2();
-        CBufferStream<MAX_BLOCK_SIZE> txs(SER_GETHASH, 0);
-        txs << pblock->vtx;
+        //qDebug() << "getwork" << pblock->nHeight;
+
+        //NEW
+        uint new_height = pblock->nHeight;
 
         Object result;
-        result.push_back(Pair("data",     HexStr(header.begin(), header.end())));
-        result.push_back(Pair("target",   HexStr(BEGIN(hashTarget), END(hashTarget))));
-        result.push_back(Pair("hash",     HexStr(BEGIN(curBlockHash), END(curBlockHash))));
-        result.push_back(Pair("kinv",     kinv));
-        result.push_back(Pair("pmr",      pmr));
-        result.push_back(Pair("prk",      prk));
-        result.push_back(Pair("tx",       HexStr(txs.begin(), txs.end())));
-        result.push_back(Pair("true_privkey", HexStr(PrivKey.begin(), PrivKey.end())));
-        result.push_back(Pair("privkey",  pmr));
+        result.clear();
+
+        if(new_height < ZILLIONFLUX_FORK_HEIGHT){
+            CBufferStream<185> header = pblock->SerializeHeaderForHash2();
+            CBufferStream<MAX_BLOCK_SIZE_V1> txs(SER_GETHASH, 0);
+            txs << pblock->vtx;
+
+            result.push_back(Pair("data",     HexStr(header.begin(), header.end())));
+            result.push_back(Pair("target",   HexStr(BEGIN(hashTarget), END(hashTarget))));
+            result.push_back(Pair("hash",     HexStr(BEGIN(curBlockHash), END(curBlockHash))));
+            result.push_back(Pair("kinv",     kinv));
+            result.push_back(Pair("pmr",      pmr));
+            result.push_back(Pair("prk",      prk));
+            result.push_back(Pair("tx",       HexStr(txs.begin(), txs.end())));
+            result.push_back(Pair("true_privkey", HexStr(PrivKey.begin(), PrivKey.end())));
+            result.push_back(Pair("privkey",  pmr));
+        }
+
+        if(new_height >= ZILLIONFLUX_FORK_HEIGHT){
+            CBufferStream<185> header = pblock->SerializeHeaderForHash2();
+            CBufferStream<MAX_BLOCK_SIZE_V2> txs(SER_GETHASH, 0);
+            txs << pblock->vtx;
+
+            result.push_back(Pair("data",     HexStr(header.begin(), header.end())));
+            result.push_back(Pair("target",   HexStr(BEGIN(hashTarget), END(hashTarget))));
+            result.push_back(Pair("hash",     HexStr(BEGIN(curBlockHash), END(curBlockHash))));
+            result.push_back(Pair("kinv",     kinv));
+            result.push_back(Pair("pmr",      pmr));
+            result.push_back(Pair("prk",      prk));
+            result.push_back(Pair("tx",       HexStr(txs.begin(), txs.end())));
+            result.push_back(Pair("true_privkey", HexStr(PrivKey.begin(), PrivKey.end())));
+            result.push_back(Pair("privkey",  pmr));
+        }
+
+        //        CBufferStream<MAX_BLOCK_SIZE_V1> txs_V1(SER_GETHASH, 0);
+        //        CBufferStream<MAX_BLOCK_SIZE_V2> txs_V2(SER_GETHASH, 0);
+        //        if(new_height < ZILLIONFLUX_FORK_HEIGHT){
+        //            txs_V1 << pblock->vtx;
+        //        }
+        //        if(new_height >= ZILLIONFLUX_FORK_HEIGHT){
+        //            txs_V2 << pblock->vtx;
+        //        }
+
+
+        //        Object result;
+        //        result.push_back(Pair("data",     HexStr(header.begin(), header.end())));
+        //        result.push_back(Pair("target",   HexStr(BEGIN(hashTarget), END(hashTarget))));
+        //        result.push_back(Pair("hash",     HexStr(BEGIN(curBlockHash), END(curBlockHash))));
+        //        result.push_back(Pair("kinv",     kinv));
+        //        result.push_back(Pair("pmr",      pmr));
+        //        result.push_back(Pair("prk",      prk));
+        //        if(new_height < ZILLIONFLUX_FORK_HEIGHT){
+        //            result.push_back(Pair("tx", HexStr(txs_V1.begin(), txs_V1.end())));
+        //        }
+        //        if(new_height >= ZILLIONFLUX_FORK_HEIGHT){
+        //            result.push_back(Pair("tx", HexStr(txs_V2.begin(), txs_V2.end())));
+        //        }
+        //        result.push_back(Pair("true_privkey", HexStr(PrivKey.begin(), PrivKey.end())));
+        //        result.push_back(Pair("privkey",  pmr));
 
         std::vector<uint256> merkle = pblock->GetMerkleBranch(0);
         Array merkle_arr;
@@ -290,6 +341,8 @@ Value getwork(const Array& params, bool fHelp)
         }
 
         result.push_back(Pair("merkle", merkle_arr));
+
+        //qDebug() << "getwork END" << pblock->nHeight;
 
         return result;
     }
@@ -459,8 +512,14 @@ Value getblocktemplate(const Array& params, bool fHelp)
     result.push_back(Pair("mintime", (int64_t)pindexPrev->GetMedianTimePast()+1));
     result.push_back(Pair("mutable", aMutable));
     result.push_back(Pair("noncerange", "00000000ffffffff"));
-    result.push_back(Pair("sigoplimit", (int64_t)MAX_BLOCK_SIGOPS));
-    result.push_back(Pair("sizelimit", (int64_t)MAX_BLOCK_SIZE));
+
+    //NEW
+    uint new_height = pindexPrev->nHeight+1;
+    //qDebug() << "getblocktemplate" << new_height;
+
+    result.push_back(Pair("sigoplimit", (int64_t)MAX_BLOCK_SIGOPS_FOR_HEIGHT(new_height)));
+    result.push_back(Pair("sizelimit", (int64_t)MAX_BLOCK_SIZE_FOR_HEIGHT(new_height)));
+
     result.push_back(Pair("curtime", (int64_t)pblock->nTime));
     result.push_back(Pair("bits", HexBits(pblock->nBits)));
     result.push_back(Pair("height", (int64_t)(pindexPrev->nHeight+1)));

@@ -639,12 +639,15 @@ int64 CTransaction::GetMinFee(unsigned int nBlockSize, bool fAllowFree,
         if (txout.nValue < DUST_SOFT_LIMIT)
             nMinFee += nBaseFee;
 
+    //NEW
+    u_int32_t max_block_size_gen = MAX_BLOCK_SIZE_GEN_FOR_HEIGHT(pindexBest->nHeight+1);
     // Raise the price as the block approaches full
-    if (nBlockSize != 1 && nNewBlockSize >= MAX_BLOCK_SIZE_GEN/2)
+    if (nBlockSize != 1 && nNewBlockSize >= max_block_size_gen/2)
     {
-        if (nNewBlockSize >= MAX_BLOCK_SIZE_GEN)
+        if (nNewBlockSize >= max_block_size_gen){
             return MAX_MONEY;
-        nMinFee *= MAX_BLOCK_SIZE_GEN / (MAX_BLOCK_SIZE_GEN - nNewBlockSize);
+        }
+        nMinFee *= max_block_size_gen / (max_block_size_gen - nNewBlockSize);
     }
 
     if (!MoneyRange(nMinFee))
@@ -1488,19 +1491,30 @@ uint256 CBlockHeader::GetHash() const
 
 uint256 CBlock::GetPoWHash() const
 {
-    if (nHeight > getSecondHardforkBlock())
+    CBufferStream<185> Header = SerializeHeaderForHash2();
+
+    if (nHeight < ZILLIONFLUX_FORK_HEIGHT)
     {
-        CBufferStream<185> Header = SerializeHeaderForHash2();
         return Hash9(Header.begin(), Header.end());
     }
-    else
+    if (nHeight >= ZILLIONFLUX_FORK_HEIGHT)
     {
-        CBufferStream<88> Header = SerializeHeaderForHash1();
-        return Hash9(Header.begin(), Header.end());
+        if (nHeight%3 == 0)
+        {
+            return HashJKS(Header.begin(), Header.end());
+        }
+        if (nHeight%3 == 1)
+        {
+            return HashKSJ(Header.begin(), Header.end());
+        }
+        if (nHeight%3 == 2)
+        {
+            return HashSJK(Header.begin(), Header.end());
+        }
     }
 }
 
-void CBlock::GetPoKData(CBufferStream<MAX_BLOCK_SIZE>& BlockData) const
+void CBlock::GetPoKData_V1(CBufferStream<MAX_BLOCK_SIZE_V1>& BlockData) const
 {
     // Start with nonce, time and miner signature as these are values changed during mining.
     BlockData << (nNonce & ~NONCE_MASK); // ignore lowest 6 bits in nonce to allow enumeration of 64 hashes without recomputing whole block hash
@@ -1519,7 +1533,7 @@ void CBlock::GetPoKData(CBufferStream<MAX_BLOCK_SIZE>& BlockData) const
 
     // Fill rest of the buffer to ensure that there is no incentive to mine small blocks without transactions.
     uint32_t *pFillBegin = (uint32_t*)&BlockData[BlockData.size()];
-    uint32_t *pFillEnd = (uint32_t*)&BlockData[MAX_BLOCK_SIZE];
+    uint32_t *pFillEnd = (uint32_t*)&BlockData[MAX_BLOCK_SIZE_V1];
     uint32_t *pFillFooter = std::max(pFillBegin, pFillEnd - 8);
 
     memcpy(pFillFooter, &hashPrevBlock, (pFillEnd - pFillFooter)*4);
@@ -1529,10 +1543,42 @@ void CBlock::GetPoKData(CBufferStream<MAX_BLOCK_SIZE>& BlockData) const
     for (uint32_t *pI = pFillFooter - 1; pI >= pFillBegin; pI--)
         pI[0] = pI[3]*pI[7];
 
-    BlockData.forsed_resize(MAX_BLOCK_SIZE);
+    BlockData.forsed_resize(MAX_BLOCK_SIZE_V1);
 }
 
-uint256 CBlock::HashPoKData(const CBufferStream<MAX_BLOCK_SIZE>& PoKData)
+void CBlock::GetPoKData_V2(CBufferStream<MAX_BLOCK_SIZE_V2>& BlockData) const
+{
+    // Start with nonce, time and miner signature as these are values changed during mining.
+    BlockData << (nNonce & ~NONCE_MASK); // ignore lowest 6 bits in nonce to allow enumeration of 64 hashes without recomputing whole block hash
+    BlockData << nTime;
+    BlockData << MinerSignature;
+    BlockData << nVersion;
+    BlockData << hashPrevBlock;
+    BlockData << hashMerkleRoot;
+    BlockData << nBits;
+    BlockData << nHeight;
+    // Skip hashWholeBlock because it is what we are computing right now.
+    BlockData << vtx;
+
+    while (BlockData.size() % 4 != 0)
+        BlockData << uint8_t(7);
+
+    // Fill rest of the buffer to ensure that there is no incentive to mine small blocks without transactions.
+    uint32_t *pFillBegin = (uint32_t*)&BlockData[BlockData.size()];
+    uint32_t *pFillEnd = (uint32_t*)&BlockData[MAX_BLOCK_SIZE_V2];
+    uint32_t *pFillFooter = std::max(pFillBegin, pFillEnd - 8);
+
+    memcpy(pFillFooter, &hashPrevBlock, (pFillEnd - pFillFooter)*4);
+    for (uint32_t *pI = pFillFooter; pI < pFillEnd; pI++)
+        *pI |= 1;
+
+    for (uint32_t *pI = pFillFooter - 1; pI >= pFillBegin; pI--)
+        pI[0] = pI[3]*pI[7];
+
+    BlockData.forsed_resize(MAX_BLOCK_SIZE_V2);
+}
+
+uint256 CBlock::HashPoKData_V1(const CBufferStream<MAX_BLOCK_SIZE_V1>& PoKData)
 {
     uint256 hash;
     SHA256_CTX ctx;
@@ -1543,7 +1589,26 @@ uint256 CBlock::HashPoKData(const CBufferStream<MAX_BLOCK_SIZE>& PoKData)
     {
         uint8_t LowByte = PoKData[0] & ~NONCE_MASK;  // ignore lowest 6 bits in nonce to allow enumeration of 64 hashes without recomputing whole block hash
         SHA256_Update(&ctx, &LowByte, 1);
-        SHA256_Update(&ctx, &PoKData[1], MAX_BLOCK_SIZE - 1);
+        SHA256_Update(&ctx, &PoKData[1], MAX_BLOCK_SIZE_V1 - 1);
+    }
+
+    SHA256_Final((uint8_t*)&hash, &ctx);
+
+    return hash;
+}
+
+uint256 CBlock::HashPoKData_V2(const CBufferStream<MAX_BLOCK_SIZE_V2>& PoKData)
+{
+    uint256 hash;
+    SHA256_CTX ctx;
+    SHA256_Init(&ctx);
+
+    // Hash everything twice to ensure that pool can not hide part of the block from miners by supplying them hash state.
+    for (int i = 0; i < 2; i++)
+    {
+        uint8_t LowByte = PoKData[0] & ~NONCE_MASK;  // ignore lowest 6 bits in nonce to allow enumeration of 64 hashes without recomputing whole block hash
+        SHA256_Update(&ctx, &LowByte, 1);
+        SHA256_Update(&ctx, &PoKData[1], MAX_BLOCK_SIZE_V2 - 1);
     }
 
     SHA256_Final((uint8_t*)&hash, &ctx);
@@ -1609,11 +1674,23 @@ bool CBlock::CheckProofOfWork() const
     if (nHeight <= getSecondHardforkBlock() || nHeight < Checkpoints::LastCheckPoint())
         return true;
 
-    CBufferStream<MAX_BLOCK_SIZE> PoKData(SER_GETHASH, 0);
-    GetPoKData(PoKData);
+    if(nHeight<ZILLIONFLUX_FORK_HEIGHT){
+        CBufferStream<MAX_BLOCK_SIZE_V1> PoKData_V1(SER_GETHASH, 0);
+        GetPoKData_V1(PoKData_V1);
 
-    if (HashPoKData(PoKData) != hashWholeBlock)
-        return error("CheckProofOfWork() : whole block hash mismatch");
+        if (HashPoKData_V1(PoKData_V1) != hashWholeBlock){
+             return error("CheckProofOfWork() : whole block hash mismatch");
+        }
+    }
+
+    if(nHeight>=ZILLIONFLUX_FORK_HEIGHT){
+        CBufferStream<MAX_BLOCK_SIZE_V2> PoKData_V2(SER_GETHASH, 0);
+        GetPoKData_V2(PoKData_V2);
+
+        if (HashPoKData_V2(PoKData_V2) != hashWholeBlock){
+             return error("CheckProofOfWork() : whole block hash mismatch");
+        }
+    }
 
     return true;
 }
@@ -2500,9 +2577,12 @@ bool CBlock::CheckBlock(CValidationState &state, bool fCheckPOW, bool fCheckMerk
     // that can be verified before saving an orphan block.
 
     // Size limits
-    if (vtx.empty() || vtx.size() > MAX_BLOCK_SIZE || ::GetSerializeSize(*this, SER_NETWORK, PROTOCOL_VERSION) > MAX_BLOCK_SIZE)
-        return state.DoS(100, error("CheckBlock() : size limits failed"));
 
+    u_int32_t max_block_size_for_height = MAX_BLOCK_SIZE_FOR_HEIGHT(nHeight);
+    if (vtx.empty() || vtx.size() > max_block_size_for_height || ::GetSerializeSize(*this, SER_NETWORK, PROTOCOL_VERSION) > max_block_size_for_height)
+    {
+        return state.DoS(100, error("CheckBlock() : size limits failed"));
+    }
 
     // Check proof of work matches claimed amount
     if (fCheckPOW && !CheckProofOfWork())
@@ -2544,8 +2624,9 @@ bool CBlock::CheckBlock(CValidationState &state, bool fCheckPOW, bool fCheckMerk
     {
         nSigOps += tx.GetLegacySigOpCount();
     }
-    if (nSigOps > MAX_BLOCK_SIGOPS)
+    if (nSigOps > MAX_BLOCK_SIGOPS_FOR_HEIGHT(nHeight)){
         return state.DoS(100, error("CheckBlock() : out-of-bounds SigOpCount"));
+    }
 
     // Check merkle root
     if (fCheckMerkleRoot && hashMerkleRoot != BuildMerkleTree())
@@ -2837,7 +2918,7 @@ CPartialMerkleTree::CPartialMerkleTree(const std::vector<uint256> &vTxid, const 
 
 CPartialMerkleTree::CPartialMerkleTree() : nTransactions(0), fBad(true) {}
 
-uint256 CPartialMerkleTree::ExtractMatches(std::vector<uint256> &vMatch) {
+/*uint256 CPartialMerkleTree::ExtractMatches(std::vector<uint256> &vMatch) {
     vMatch.clear();
     // An empty set will not work
     if (nTransactions == 0)
@@ -2868,7 +2949,7 @@ uint256 CPartialMerkleTree::ExtractMatches(std::vector<uint256> &vMatch) {
     if (nHashUsed != vHash.size())
         return 0;
     return hashMerkleRoot;
-}
+}*/
 
 
 
@@ -4601,10 +4682,18 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn)
         // end masternode payments
 
 
+        u_int32_t max_block_size_for_height = MAX_BLOCK_SIZE_FOR_HEIGHT(pindexBest->nHeight+1);
+
         // Largest block you're willing to create:
-        unsigned int nBlockMaxSize = GetArg("-blockmaxsize", DEFAULT_BLOCK_MAX_SIZE);
+        //unsigned int nBlockMaxSize = GetArg("-blockmaxsize", DEFAULT_BLOCK_MAX_SIZE);
         // Limit to betweeen 1K and MAX_BLOCK_SIZE-1K for sanity:
-        nBlockMaxSize = std::max((unsigned int)1000, std::min((unsigned int)(MAX_BLOCK_SIZE-1000), nBlockMaxSize));
+        //nBlockMaxSize = std::max((unsigned int)1000, std::min((unsigned int)(MAX_BLOCK_SIZE-1000), nBlockMaxSize));
+
+        // Largest block you're willing to create:
+        unsigned int nBlockMaxSize = GetArg("-blockmaxsize", max_block_size_for_height);
+        // Limit to betweeen 1K and MAX_BLOCK_SIZE-1K for sanity:
+        //nBlockMaxSize = std::max((unsigned int)1000, std::min((unsigned int)(MAX_BLOCK_SIZE-1000), nBlockMaxSize));
+        nBlockMaxSize = std::max((unsigned int)1000, std::min((unsigned int)(max_block_size_for_height-1000), nBlockMaxSize));
 
         // How much of the block should be dedicated to high-priority transactions,
         // included regardless of the fees they pay
@@ -4724,7 +4813,10 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn)
 
                 // Legacy limits on sigOps:
                 unsigned int nTxSigOps = tx.GetLegacySigOpCount();
-                if (nBlockSigOps + nTxSigOps >= MAX_BLOCK_SIGOPS)
+
+                u_int32_t max_block_sigops_for_height = MAX_BLOCK_SIGOPS_FOR_HEIGHT(pindexBest->nHeight+1);
+
+                if (nBlockSigOps + nTxSigOps >= max_block_sigops_for_height)
                     continue;
 
                 // Skip free transactions if we're past the minimum block size:
@@ -4747,7 +4839,7 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn)
                 int64 nTxFees = tx.GetValueIn(view)-tx.GetValueOut();
 
                 nTxSigOps += tx.GetP2SHSigOpCount(view);
-                if (nBlockSigOps + nTxSigOps >= MAX_BLOCK_SIGOPS)
+                if (nBlockSigOps + nTxSigOps >= max_block_sigops_for_height)
                     continue;
 
                 CValidationState state;
@@ -4929,6 +5021,9 @@ void static ZillionCoinMiner(CWallet *pwallet)
         unsigned int nTransactionsUpdatedLast = nTransactionsUpdated;
         CBlockIndex* pindexPrev = pindexBest;
 
+        //NEW
+        u_int32_t new_height = pindexBest->nHeight+1;
+
         CPubKey pubkey;
         CKey PrivKey;
         if (MiningKey.IsValid())
@@ -4951,31 +5046,32 @@ void static ZillionCoinMiner(CWallet *pwallet)
         printf("Running ZillionCoinMiner with %"PRIszu" transactions in block (%u bytes)\n", pblock->vtx.size(),
                ::GetSerializeSize(*pblock, SER_NETWORK, PROTOCOL_VERSION));
 
-        CBufferStream<MAX_BLOCK_SIZE> PoKData(SER_GETHASH, 0);
-        pblock->GetPoKData(PoKData);
-        uint8_t* pNonce = &PoKData[0];
-        uint8_t* pBlockTime = &PoKData[4];
-        uint8_t* pMinerSignature = &PoKData[12];
-        CSignerECDSA Signer(PrivKey.begin(), pblock->MinerSignature.begin());
-
         //
         // Search
         //
         int64 nStart = GetTime();
-        uint256 hashTarget = CBigNum().SetCompact(pblock->nBits).getuint256();
+        if(new_height < ZILLIONFLUX_FORK_HEIGHT){
+        CBufferStream<MAX_BLOCK_SIZE_V1> PoKData_V1(SER_GETHASH, 0);
+        pblock->GetPoKData_V1(PoKData_V1);
+        uint8_t* pNonce_V1 = &PoKData_V1[0];
+        uint8_t* pBlockTime_V1 = &PoKData_V1[4];
+        uint8_t* pMinerSignature_V1 = &PoKData_V1[12];
+        CSignerECDSA Signer_V1(PrivKey.begin(), pblock->MinerSignature.begin());
+
+        uint256 hashTarget_V1 = CBigNum().SetCompact(pblock->nBits).getuint256();
         for (;;)
         {
-            unsigned int nHashesDone = 0;
+            unsigned int nHashesDone_V1 = 0;
 
             for (;;)
             {
                 if ((pblock->nNonce & NONCE_MASK) == 0)
                 {
-                    Signer.SignFast(pblock->GetHashForSignature(), pblock->MinerSignature.begin());
-                    memcpy(pMinerSignature, pblock->MinerSignature.begin(), pblock->MinerSignature.size());
-                    pblock->hashWholeBlock = CBlock::HashPoKData(PoKData);
+                    Signer_V1.SignFast(pblock->GetHashForSignature(), pblock->MinerSignature.begin());
+                    memcpy(pMinerSignature_V1, pblock->MinerSignature.begin(), pblock->MinerSignature.size());
+                    pblock->hashWholeBlock = CBlock::HashPoKData_V1(PoKData_V1);
                 }
-                bool Good = pblock->GetPoWHash() <= hashTarget && pblock->GetRewardAddress() == pubkey;
+                bool Good = pblock->GetPoWHash() <= hashTarget_V1 && pblock->GetRewardAddress() == pubkey;
 
                 if (Good)
                 {
@@ -4986,21 +5082,21 @@ void static ZillionCoinMiner(CWallet *pwallet)
                     break;
                 }
                 pblock->nNonce += 1;
-                memcpy(pNonce, &pblock->nNonce, sizeof(pblock->nNonce));
-                nHashesDone += 1;
+                memcpy(pNonce_V1, &pblock->nNonce, sizeof(pblock->nNonce));
+                nHashesDone_V1 += 1;
                 if ((pblock->nNonce & 0xFF) == 0)
                     break;
             }
 
             // Meter hashes/sec
-            static int64 nHashCounter;
+            static int64 nHashCounter_V1;
             if (nHPSTimerStart == 0)
             {
                 nHPSTimerStart = GetTimeMillis();
-                nHashCounter = 0;
+                nHashCounter_V1 = 0;
             }
             else
-                nHashCounter += nHashesDone;
+                nHashCounter_V1 += nHashesDone_V1;
             if (GetTimeMillis() - nHPSTimerStart > 4000)
             {
                 static CCriticalSection cs;
@@ -5008,13 +5104,13 @@ void static ZillionCoinMiner(CWallet *pwallet)
                     LOCK(cs);
                     if (GetTimeMillis() - nHPSTimerStart > 4000)
                     {
-                        dHashesPerSec = 1000.0 * nHashCounter / (GetTimeMillis() - nHPSTimerStart);
+                        dHashesPerSec = 1000.0 * nHashCounter_V1 / (GetTimeMillis() - nHPSTimerStart);
                         nHPSTimerStart = GetTimeMillis();
-                        nHashCounter = 0;
-                        static int64 nLogTime;
-                        if (GetTime() - nLogTime > 30 * 60)
+                        nHashCounter_V1 = 0;
+                        static int64 nLogTime_V1;
+                        if (GetTime() - nLogTime_V1 > 30 * 60)
                         {
-                            nLogTime = GetTime();
+                            nLogTime_V1 = GetTime();
                             printf("hashmeter %6.0f khash/s\n", dHashesPerSec/1000.0);
                         }
                     }
@@ -5034,12 +5130,103 @@ void static ZillionCoinMiner(CWallet *pwallet)
 
             // Update nTime every few seconds
             pblock->UpdateTime(pindexPrev);
-            memcpy(pBlockTime, &pblock->nTime, sizeof(pblock->nTime));
+            memcpy(pBlockTime_V1, &pblock->nTime, sizeof(pblock->nTime));
             if (fTestNet)
             {
                 // Changing pblock->nTime can change work required on testnet:
-                hashTarget = CBigNum().SetCompact(pblock->nBits).getuint256();
+                hashTarget_V1 = CBigNum().SetCompact(pblock->nBits).getuint256();
             }
+        }
+        }
+        //
+
+        if(new_height >= ZILLIONFLUX_FORK_HEIGHT){
+        CBufferStream<MAX_BLOCK_SIZE_V2> PoKData_V2(SER_GETHASH, 0);
+        pblock->GetPoKData_V2(PoKData_V2);
+        uint8_t* pNonce_V2 = &PoKData_V2[0];
+        uint8_t* pBlockTime_V2 = &PoKData_V2[4];
+        uint8_t* pMinerSignature_V2 = &PoKData_V2[12];
+        CSignerECDSA Signer_V2(PrivKey.begin(), pblock->MinerSignature.begin());
+
+        uint256 hashTarget_V2 = CBigNum().SetCompact(pblock->nBits).getuint256();
+        for (;;)
+        {
+            unsigned int nHashesDone_V2 = 0;
+
+            for (;;)
+            {
+                if ((pblock->nNonce & NONCE_MASK) == 0)
+                {
+                    Signer_V2.SignFast(pblock->GetHashForSignature(), pblock->MinerSignature.begin());
+                    memcpy(pMinerSignature_V2, pblock->MinerSignature.begin(), pblock->MinerSignature.size());
+                    pblock->hashWholeBlock = CBlock::HashPoKData_V2(PoKData_V2);
+                }
+                bool Good = pblock->GetPoWHash() <= hashTarget_V2 && pblock->GetRewardAddress() == pubkey;
+
+                if (Good)
+                {
+                    // Found a solution
+                    SetThreadPriority(THREAD_PRIORITY_NORMAL);
+                    CheckWork(pblock, *pwallet, MiningKey.IsValid()? NULL : &reservekey);
+                    SetThreadPriority(THREAD_PRIORITY_LOWEST);
+                    break;
+                }
+                pblock->nNonce += 1;
+                memcpy(pNonce_V2, &pblock->nNonce, sizeof(pblock->nNonce));
+                nHashesDone_V2 += 1;
+                if ((pblock->nNonce & 0xFF) == 0)
+                    break;
+            }
+
+            // Meter hashes/sec
+            static int64 nHashCounter_V2;
+            if (nHPSTimerStart == 0)
+            {
+                nHPSTimerStart = GetTimeMillis();
+                nHashCounter_V2 = 0;
+            }
+            else
+                nHashCounter_V2 += nHashesDone_V2;
+            if (GetTimeMillis() - nHPSTimerStart > 4000)
+            {
+                static CCriticalSection cs;
+                {
+                    LOCK(cs);
+                    if (GetTimeMillis() - nHPSTimerStart > 4000)
+                    {
+                        dHashesPerSec = 1000.0 * nHashCounter_V2 / (GetTimeMillis() - nHPSTimerStart);
+                        nHPSTimerStart = GetTimeMillis();
+                        nHashCounter_V2 = 0;
+                        static int64 nLogTime_V2;
+                        if (GetTime() - nLogTime_V2 > 30 * 60)
+                        {
+                            nLogTime_V2 = GetTime();
+                            printf("hashmeter %6.0f khash/s\n", dHashesPerSec/1000.0);
+                        }
+                    }
+                }
+            }
+
+            // Check for stop or if block needs to be rebuilt
+            boost::this_thread::interruption_point();
+            if (vNodes.empty() && !fTestNet)
+                break;
+            if (pblock->nNonce >= 0xffff0000)
+                break;
+            if (nTransactionsUpdated != nTransactionsUpdatedLast && GetTime() - nStart > 60)
+                break;
+            if (pindexPrev != pindexBest)
+                break;
+
+            // Update nTime every few seconds
+            pblock->UpdateTime(pindexPrev);
+            memcpy(pBlockTime_V2, &pblock->nTime, sizeof(pblock->nTime));
+            if (fTestNet)
+            {
+                // Changing pblock->nTime can change work required on testnet:
+                hashTarget_V2 = CBigNum().SetCompact(pblock->nBits).getuint256();
+            }
+        }
         }
     } }
     catch (boost::thread_interrupted)
