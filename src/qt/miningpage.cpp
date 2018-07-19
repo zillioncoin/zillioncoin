@@ -53,7 +53,7 @@ MiningPage::MiningPage(QWidget *parent) :
     int algo_version = 1;
 
     int height = nBestHeight+1;
-    if(height>=360){
+    if(height>=ZILLIONFLUX_FORK_HEIGHT){
         algo_version = 2;
     }
 
@@ -321,7 +321,7 @@ void MiningPage::timerEvent(QTimerEvent *)
     int algo_version = 1;
 
     int height = nBestHeight+1;
-    if(height>=360){
+    if(height>=ZILLIONFLUX_FORK_HEIGHT){
         algo_version = 2;
     }
 

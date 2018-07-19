@@ -17,6 +17,7 @@ using namespace std;
 // or from the last difficulty change if 'lookup' is nonpositive.
 // If 'height' is nonnegative, compute the estimate at the time when a given block was found.
 Value GetNetworkHashPS(int lookup, int height) {
+
     CBlockIndex *pb = pindexBest;
 
     if (height >= 0 && height < nBestHeight)
@@ -266,10 +267,7 @@ Value getwork(const Array& params, bool fHelp)
         std::string pmr  = prefixToWidth(Signer.GetPMR() , 64, '0');
         std::string prk  = prefixToWidth(Signer.GetPRK() , 64, '0');
 
-        //qDebug() << "getwork" << pblock->nHeight;
-
-        //NEW
-        uint new_height = pblock->nHeight;
+        unsigned int new_height = pblock->nHeight;
 
         Object result;
         result.clear();
@@ -514,7 +512,7 @@ Value getblocktemplate(const Array& params, bool fHelp)
     result.push_back(Pair("noncerange", "00000000ffffffff"));
 
     //NEW
-    uint new_height = pindexPrev->nHeight+1;
+    unsigned int new_height = pindexPrev->nHeight+1;
     //qDebug() << "getblocktemplate" << new_height;
 
     result.push_back(Pair("sigoplimit", (int64_t)MAX_BLOCK_SIGOPS_FOR_HEIGHT(new_height)));
