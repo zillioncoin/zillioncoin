@@ -58,7 +58,7 @@ DEFS=-D_MT -DWIN32 -D_WINDOWS -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE
 DEBUGFLAGS=-g
 CFLAGS=-mthreads -O2 -w -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter -std=gnu++0x -Wno-literal-suffix $(DEBUGFLAGS) $(DEFS) $(INCLUDEPATHS)
 # enable: ASLR, DEP and large address aware
-LDFLAGS=-Wl,--dynamicbase -Wl,--nxcompat -Wl,--large-address-aware -static-libgcc -static-libstdc++
+LDFLAGS=-Wl,--dynamicbase -Wl,--nxcompat -Wl,--large-address-aware -static-libgcc -static-libstdc++ -static
 
 TESTDEFS = -DTEST_DATA_DIR=$(abspath test/data)
 
@@ -125,10 +125,10 @@ OBJS= \
     obj/simd.o \
     obj/ecdsa.o
 
-all: spreadcoind.exe
+all: zillioncoind.exe
 
-#test check: test_spreadcoin.exe FORCE
-#	test_spreadcoin.exe
+#test check: test_zillioncoin.exe FORCE
+#	test_zillioncoin.exe
 
 #
 # LevelDB support
@@ -151,7 +151,7 @@ obj/%.o: sphlib/%.c $(HEADERS)
 obj/%.o: %.c $(HEADERS)
 	$(CXX) -c $(CFLAGS) -fpermissive -o $@ $<
 
-spreadcoind.exe: $(OBJS:obj/%=obj/%)
+zillioncoind.exe: $(OBJS:obj/%=obj/%)
 	$(CXX) $(CFLAGS) $(LDFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS)
 
 #TESTOBJS := $(patsubst test/%.cpp,obj-test/%.o,$(wildcard test/*.cpp))
@@ -159,11 +159,11 @@ spreadcoind.exe: $(OBJS:obj/%=obj/%)
 #obj-test/%.o: test/%.cpp $(HEADERS)
 #	$(CXX) -c $(TESTDEFS) $(CFLAGS) -o $@ $<
 
-#test_spreadcoin.exe: $(TESTOBJS) $(filter-out obj/init.o,$(OBJS:obj/%=obj/%))
+#test_zillioncoin.exe: $(TESTOBJS) $(filter-out obj/init.o,$(OBJS:obj/%=obj/%))
 #	$(CXX) $(CFLAGS) $(LDFLAGS) -o $@ $(LIBPATHS) $^ -lboost_unit_test_framework$(BOOST_SUFFIX) $(LIBS)
 
 clean:
-	rm -f spreadcoind.exe test_spreadcoin.exe
+	rm -f zillioncoind.exe test_zillioncoin.exe
 	rm -f obj/*
 	rm -f obj-test/*
 	cd leveldb && $(MAKE) TARGET_OS=NATIVE_WINDOWS clean && cd ..
