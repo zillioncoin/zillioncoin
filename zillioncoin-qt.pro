@@ -10,6 +10,7 @@ CONFIG += no_include_pwd
 #CONFIG += static
 
 USE_UPNP = -
+USE_QRCODE=1
 
 # for boost 1.37, add -mt to the boost libraries
 # use: qmake BOOST_LIB_SUFFIX=-mt
@@ -31,6 +32,8 @@ win32:{
     OPENSSL_LIB_PATH=D:/deps/openssl
     MINIUPNPC_INCLUDE_PATH=D:/deps/miniupnpc
     MINIUPNPC_LIB_PATH=D:/deps/miniupnpc
+    QRENCODE_INCLUDE_PATH=D:/deps/qrencode-3.4.4
+    QRENCODE_LIB_PATH=D:/deps/qrencode-3.4.4/.libs
 }
 
 OBJECTS_DIR = build
@@ -71,10 +74,14 @@ win32:QMAKE_LFLAGS *= -Wl,--dynamicbase -Wl,--nxcompat
 #win32:QMAKE_LFLAGS *= -static
 
 # use: qmake "USE_QRCODE=1"
+
 # libqrencode (http://fukuchi.org/works/qrencode/index.en.html) must be installed for support
 contains(USE_QRCODE, 1) {
     message(Building with QRCode support)
     DEFINES += USE_QRCODE
+
+    INCLUDEPATH += $$QRENCODE_INCLUDE_PATH
+    LIBS += $$join(QRENCODE_LIB_PATH,,-L,)
     LIBS += -lqrencode
 }
 
@@ -266,7 +273,8 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/pixmapeffect.h \
     src/qt/qgraphicstinteffect.h \
     src/qt/marketcappage.h \
-    src/qt/tickerheader.h
+    src/qt/tickerheader.h \
+    src/qt/zilliongridpage.h
 
 SOURCES += src/qt/bitcoin.cpp \
     src/qt/bitcoingui.cpp \
@@ -363,7 +371,8 @@ SOURCES += src/qt/bitcoin.cpp \
     src/qt/pixmapeffect.cpp \
     src/qt/qgraphicstinteffect.cpp \
     src/qt/marketcappage.cpp \
-    src/qt/tickerheader.cpp
+    src/qt/tickerheader.cpp \
+    src/qt/zilliongridpage.cpp
 
 RESOURCES += src/qt/bitcoin.qrc
 
@@ -383,7 +392,8 @@ FORMS += src/qt/forms/sendcoinsdialog.ui \
     src/qt/forms/miningpage.ui \
     src/qt/forms/mininginfopage.ui \
     src/qt/forms/vanitygenpage.ui \
-    src/qt/forms/marketcappage.ui
+    src/qt/forms/marketcappage.ui \
+    src/qt/forms/zilliongridpage.ui
 
 contains(USE_QRCODE, 1) {
 HEADERS += src/qt/qrcodedialog.h

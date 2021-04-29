@@ -61,7 +61,7 @@ MarketCapPage::MarketCapPage(QWidget *parent) :
     limit = 20;
     currency = "USD";
 
-    ui->comboBox->addItem(" coinmarketcap.com  ", 1);
+    ui->comboBox->addItem(" coingecko.com  ", 1);
     ui->comboBox->addItem(" Zillion Grid  ", 2);
 
     //Disabling Zillion Grid for now:
@@ -80,8 +80,8 @@ MarketCapPage::MarketCapPage(QWidget *parent) :
     ui->comboBox_3->addItem(" 20  ", 20);
     ui->comboBox_3->addItem(" 50  ", 50);
     ui->comboBox_3->addItem(" 100  ", 100);
-    ui->comboBox_3->addItem(" 200  ", 200);
-    ui->comboBox_3->addItem(" ALL  ", 0);
+    ui->comboBox_3->addItem(" 250  ", 250);
+    //ui->comboBox_3->addItem(" ALL  ", 0);
     ui->comboBox_3->adjustSize();
 
     connect(ui->comboBox_2, SIGNAL(currentIndexChanged(int)), this, SLOT(updateCurrency(int)));
@@ -142,14 +142,17 @@ MarketCapPage::~MarketCapPage()
 void MarketCapPage::getMarketValues()
 {
     qDebug() << "getMarketValues";
-    manager->get(QNetworkRequest(QUrl("https://api.coinmarketcap.com/v1/ticker/?limit="+QString::number(limit)+"&convert="+currency)));
+    manager->get(QNetworkRequest(QUrl("https://api.coingecko.com/api/v3/coins/markets?vs_currency="+currency+"&per_page="+QString::number(limit))));
+    //
+    //manager->get(QNetworkRequest(QUrl("https://api.coinmarketcap.com/v1/ticker/?limit="+QString::number(limit)+"&convert="+currency)));
 }
 
 void MarketCapPage::getGlobalData()
 {
     qDebug() << "getGlobalData";
 
-    managerGlobalData->get(QNetworkRequest(QUrl("https://api.coinmarketcap.com/v1/global/?convert="+currency)));
+    managerGlobalData->get(QNetworkRequest(QUrl("https://api.coingecko.com/api/v3/coins/markets?vs_currency="+currency+"&per_page="+QString::number(250))));
+    //managerGlobalData->get(QNetworkRequest(QUrl("https://api.coinmarketcap.com/v1/global/?convert="+currency)));
 }
 
 void MarketCapPage::updateCurrencySymbolAndHeader()
@@ -261,7 +264,7 @@ void MarketCapPage::replyFinished(QNetworkReply *reply)
 
     QString jsonString = QString::fromUtf8(reply->readAll()).simplified();
 
-    //qDebug() << "jsonString" << jsonString;
+   //qDebug() << "jsonString" << jsonString;
 
 
 
@@ -301,9 +304,10 @@ void MarketCapPage::replyFinished(QNetworkReply *reply)
     QString str_percent_change_24h;
 
     double _market_cap_d;
-    double _24h_volume_d;
-    double _available_supply_d;
-    double _percent_change_24h_d;
+    double _current_price_d;
+    double _total_volume_d;
+    double _circulating_supply_d;
+    double _price_change_percentage_24h_d;
 
     int bull_count = 0;
 
@@ -318,7 +322,7 @@ void MarketCapPage::replyFinished(QNetworkReply *reply)
 
         stringItem = "";
 
-        stringItem.append(jsonObj[i].toObject()["symbol"].toString());
+        stringItem.append(jsonObj[i].toObject()["symbol"].toString().toUpper());
 
         item = new QTableWidgetItem(jsonObj[i].toObject()["name"].toString());
         item->setData(Qt::UserRole, i);
@@ -349,7 +353,10 @@ void MarketCapPage::replyFinished(QNetworkReply *reply)
 
         //MarketCap
 
-        _market_cap_d = jsonObj[i].toObject()["market_cap_"+currency.toLower()].toString().toDouble();
+        //_market_cap_d = jsonObj[i].toObject()["market_cap_"+currency.toLower()].toString().toDouble();
+        _market_cap_d = jsonObj[i].toObject()["market_cap"].toDouble();
+
+        //qDebug() << i << jsonObj[i].toObject()["circulating_supply"];// << jsonObj[i].toObject()["symbol"] << jsonObj[i].toObject()["id"] << jsonObj[i].toObject()["market_cap"];
 
         /*item = new QTableWidgetItem(formatNumber(QString::number(_market_cap_d,'f',0)));
         item->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -371,12 +378,24 @@ void MarketCapPage::replyFinished(QNetworkReply *reply)
         */
 
 
-        stringItem.append("---"+formatNumber(jsonObj[i].toObject()["price_"+currency.toLower()].toString()));
+        //stringItem.append("---"+formatNumber(jsonObj[i].toObject()["price_"+currency.toLower()].toString()));
+
+
+        _current_price_d = jsonObj[i].toObject()["current_price"].toDouble();
+
+         stringItem.append("---"+formatNumber(QString::number(_current_price_d,'f',8)));
+
+        //
 
         titem = new TabItem(
+                    formatNumber(QString::number(_current_price_d,'f',8)),
+                QVariant(_current_price_d),
+                TabItem::DOUBLE);
+/*        titem = new TabItem(
                     formatNumber(jsonObj[i].toObject()["price_"+currency.toLower()].toString()),
                 QVariant(jsonObj[i].toObject()["price_"+currency.toLower()].toString().toDouble()),
-                TabItem::DOUBLE);
+                TabItem::DOUBLE);*/
+
         titem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
         titem->setFont(f2);
         ui->tableWidget->setItem(i,2,titem);
@@ -392,38 +411,40 @@ void MarketCapPage::replyFinished(QNetworkReply *reply)
 
         //24h volume
 
-        _24h_volume_d = jsonObj[i].toObject()["24h_volume_"+currency.toLower()].toString().toDouble();
+        _total_volume_d = jsonObj[i].toObject()["total_volume"].toDouble();
 
         /*item = new QTableWidgetItem(formatNumber(QString::number(_24h_volume_d,'f',0)));
         item->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
         ui->tableWidget->setItem(i,3,item);*/
 
         titem = new TabItem(
-                    formatNumber(QString::number(_24h_volume_d,'f',0)),
-                QVariant(_24h_volume_d),
+                    formatNumber(QString::number(_total_volume_d,'f',0)),
+                QVariant(_total_volume_d),
                 TabItem::DOUBLE);
         titem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
         ui->tableWidget->setItem(i,3,titem);
 
         //available_supply
 
-        _available_supply_d =jsonObj[i].toObject()["available_supply"].toString().toDouble();
+        _circulating_supply_d =jsonObj[i].toObject()["circulating_supply"].toDouble();
 
         /*item = new QTableWidgetItem(formatNumber(QString::number(_available_supply_d,'f',0))+" "+jsonObj[i].toObject()["symbol"].toString());
         item->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
         ui->tableWidget->setItem(i,4,item);*/
 
         titem = new TabItem(
-                    formatNumber(QString::number(_available_supply_d,'f',0))+" "+jsonObj[i].toObject()["symbol"].toString(),
-                QVariant(_available_supply_d),
+                    formatNumber(QString::number(_circulating_supply_d,'f',0))+" "+jsonObj[i].toObject()["symbol"].toString().toUpper(),
+                QVariant(_circulating_supply_d),
                 TabItem::DOUBLE);
         titem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
         ui->tableWidget->setItem(i,4,titem);
 
         //Percentage change 24h
 
-        str_percent_change_24h = jsonObj[i].toObject()["percent_change_24h"].toString()+" %";//+ QString::number(i);
-        _percent_change_24h_d = jsonObj[i].toObject()["percent_change_24h"].toString().toDouble();
+        _price_change_percentage_24h_d = jsonObj[i].toObject()["price_change_percentage_24h"].toDouble();
+
+        str_percent_change_24h = formatNumber(QString::number(_price_change_percentage_24h_d,'f',2))+" %";//+ QString::number(i);
+
 
         /*item = new QTableWidgetItem(str_percent_change_24h);
         //item->setData(Qt::EditRole, i);
@@ -436,9 +457,10 @@ void MarketCapPage::replyFinished(QNetworkReply *reply)
         }
         ui->tableWidget->setItem(i,5,item);*/
 
+
         titem = new TabItem(
                     str_percent_change_24h,
-                QVariant(_percent_change_24h_d),
+                QVariant(_price_change_percentage_24h_d),
                 TabItem::DOUBLE);
         titem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
         if(str_percent_change_24h.count("-",Qt::CaseInsensitive) >0){
@@ -549,13 +571,23 @@ void MarketCapPage::replyFinishedGlobalData(QNetworkReply *reply)
     //qDebug() << jsonString;
 
     QJsonDocument jsonResponse = QJsonDocument::fromJson(jsonString.toUtf8());
-    QJsonObject jsonObj = jsonResponse.object();
+    QJsonArray jsonObj = jsonResponse.array();
 
     double total_market_cap = 0;
     double total_24h_volume = 0;
 
-    total_market_cap = jsonObj["total_market_cap_"+currency.toLower()].toDouble();
-    total_24h_volume = jsonObj["total_24h_volume_"+currency.toLower()].toDouble();
+    double _market_cap_d;
+    double _total_volume_d;
+
+    for(int i = 0;i<jsonObj.count();i++){
+        _market_cap_d = jsonObj[i].toObject()["market_cap"].toDouble();
+        _total_volume_d = jsonObj[i].toObject()["total_volume"].toDouble();
+
+        total_market_cap+= _market_cap_d;
+        total_24h_volume+= _total_volume_d;
+    }
+
+
 
     updateCurrencySymbolAndHeader();
 

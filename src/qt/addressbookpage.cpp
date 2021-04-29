@@ -10,6 +10,8 @@
 
 #include "vanitygenwork.h"
 
+//#define USE_QRCODE = 1
+
 #ifdef USE_QRCODE
 #include "qrcodedialog.h"
 #endif

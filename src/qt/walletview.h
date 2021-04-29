@@ -22,6 +22,7 @@ class MiningPage;
 class MiningInfoPage;
 class VanityGenPage;
 class MarketCapPage;
+class ZillionGridPage;
 
 QT_BEGIN_NAMESPACE
 class QLabel;
@@ -73,6 +74,7 @@ private:
     MiningInfoPage *miningInfoPage;
 
     MarketCapPage *marketCapPage;
+    ZillionGridPage *zillionGridPage;
 
     SignVerifyMessageDialog *signVerifyMessageDialog;
 
@@ -98,6 +100,9 @@ public slots:
 
     /** Switch to marketcap page */
     void gotoMarketCapPage();
+
+    /** Switch to zilliongrid page */
+    void gotoZillionGridPage();
 
     /** Refresh History Page Sidebar Menu */
     void refreshHistoryPage();

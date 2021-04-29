@@ -24,6 +24,8 @@
 #include "marketcappage.h"
 #include "tickerheader.h"
 
+#include "zilliongridpage.h"
+
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QAction>
@@ -78,6 +80,8 @@ WalletView::WalletView(QWidget *parent, BitcoinGUI *_gui):
 
     marketCapPage = new MarketCapPage(gui);
 
+    zillionGridPage = new ZillionGridPage(gui);
+
     signVerifyMessageDialog = new SignVerifyMessageDialog(gui);
 
     addWidget(overviewPage);
@@ -92,8 +96,12 @@ WalletView::WalletView(QWidget *parent, BitcoinGUI *_gui):
 
     addWidget(marketCapPage);
 
+    addWidget(zillionGridPage);
+
     connect(marketCapPage, SIGNAL(sendMarketValues(QString,QString,int)), gui->guiHeader, SLOT(setMarketValues(QString,QString,int)));
     connect(marketCapPage, SIGNAL(sendTickerData(QList<QString>)), gui->tickerHeader, SLOT(setTickerData(QList<QString>)));
+
+    connect(zillionGridPage, SIGNAL(sendSimpleGridData(QStringList)), gui->guiHeader, SLOT(sendSimpleGridData(QStringList)));
 
     connect(gui->guiHeader, SIGNAL(transactionClicked2(QModelIndex)), this, SLOT(gotoHistoryPage()));
     connect(gui->guiHeader, SIGNAL(transactionClicked2(QModelIndex)), this, SLOT(refreshHistoryPage()));
@@ -110,6 +118,7 @@ WalletView::WalletView(QWidget *parent, BitcoinGUI *_gui):
     connect(receiveCoinsPage, SIGNAL(signMessage(QString)), this, SLOT(gotoSignMessageTab(QString)));
     // Clicking on "Export" allows to export the transaction list
     connect(exportButton, SIGNAL(clicked()), transactionView, SLOT(exportClicked()));
+
 
     //gotoOverviewPage();
     gotoSendCoinsPage();
@@ -155,6 +164,9 @@ void WalletView::setWalletModel(WalletModel *walletModel)
         miningPage->setModel(walletModel);
 
         vanityGenPage->setWalletModel(walletModel);
+
+        //to be able to disable ticker through GUI
+        gui->setWalletModel(walletModel);
 
         setEncryptionStatus();
         connect(walletModel, SIGNAL(encryptionStatusChanged(int)), gui, SLOT(setEncryptionStatus(int)));
@@ -253,6 +265,11 @@ void WalletView::gotoMiningInfoPage()
 void WalletView::gotoMarketCapPage()
 {
     setCurrentWidget(marketCapPage);
+}
+
+void WalletView::gotoZillionGridPage()
+{
+    setCurrentWidget(zillionGridPage);
 }
 
 void WalletView::refreshHistoryPage()

@@ -83,7 +83,8 @@ BitcoinGUI::BitcoinGUI(QWidget *parent) :
     notificator(0),
     rpcConsole(0),
     blockExplorer(0),
-    prevBlocks(0)
+    prevBlocks(0),
+    ticker_enabled(-1)
 {
     restoreWindowGeometry();
     setWindowTitle(tr("ZillionCoin") + " - " + tr("Wallet"));
@@ -303,9 +304,9 @@ BitcoinGUI::BitcoinGUI(QWidget *parent) :
     setWalletActionsEnabled(false);
 
 
-    zillionTab->move(4,4+120+20+MENU_OFFSET);
-    walletFrame->move(180+4,4+160+20+MENU_OFFSET);//+90);
-    sideBarContainer->move(0,-10+4+160+20+MENU_OFFSET);//+90);
+    //zillionTab->move(4,4+120+20+MENU_OFFSET);
+    //walletFrame->move(180+4,4+160+20+MENU_OFFSET);//+90);
+    //sideBarContainer->move(0,-10+4+160+20+MENU_OFFSET);//+90);
 }
 
 BitcoinGUI::~BitcoinGUI()
@@ -326,6 +327,7 @@ void BitcoinGUI::createHeader()
 
     tickerHeader = new TickerHeader(this);
     tickerHeader->move(0,MENU_OFFSET);
+
 }
 
 void BitcoinGUI::createCategories()
@@ -336,7 +338,7 @@ void BitcoinGUI::createCategories()
 void BitcoinGUI::createSideBar()
 {
 
-    for(int i = 0;i<3;i++){
+    for(int i = 0;i<4;i++){
         QVector<menu_descriptor> tempVector;
         subMenuIdentifier.append(tempVector);
     }
@@ -344,6 +346,7 @@ void BitcoinGUI::createSideBar()
     mainMenuIdentifier.append({":/icons/wallet","WALLET"});
     mainMenuIdentifier.append({":/icons/mining","MINING"});
     mainMenuIdentifier.append({":/icons/market","MARKET"});
+    mainMenuIdentifier.append({":/icons/grid","GRID"});
 
     subMenuIdentifier[0].append({":/icons/send","SEND COINS",tr("Send coins to a ZillionCoin address")});
     subMenuIdentifier[0].append({":/icons/receive","RECEIVE COINS",tr("Show the list of addresses for receiving payments")});
@@ -356,6 +359,7 @@ void BitcoinGUI::createSideBar()
     subMenuIdentifier[1].append({":/icons/cpu","CPU MINER",tr("Mine ZillionCoins with your CPU")});
 
     subMenuIdentifier[2].append({":/icons/marketcap","MARKETCAP"});
+    subMenuIdentifier[3].append({":/icons/grid","WORLDMAP"});
 
 
     int offset_y = 10;//4+160+MENU_OFFSET;
@@ -950,6 +954,23 @@ void BitcoinGUI::whichTabWasClicked(int i)
     }
 }
 
+void BitcoinGUI::displayTickerChanged(bool b)
+{
+    qDebug() << "displayTickerChanged ---------------------------------" << b;
+    b ? ticker_enabled = 1: ticker_enabled = -1;
+    /*update();
+    repaint();
+    qApp->processEvents();
+    updateGeometry();*/
+    qDebug() << this->size();
+    QSize size_ = this->size();
+    adjustSize();
+    resize(size_);
+    qDebug() << "......" << this->sizeHint();
+
+
+}
+
 void BitcoinGUI::aboutClicked()
 {
     AboutDialog dlg;
@@ -1008,6 +1029,17 @@ void BitcoinGUI::stretchStack(){
 void BitcoinGUI::externCommand(const QString &command)
 {
     rpcConsole->externCommand(command);
+}
+
+void BitcoinGUI::setWalletModel(WalletModel *model)
+{
+    this->walletModel = model;
+
+   if(model && model->getOptionsModel()){
+       connect(model->getOptionsModel(), SIGNAL(displayTickerChanged(bool)), this, SLOT(displayTickerChanged(bool)));
+        qDebug() << "model->getOptionsModel()->getDisplayTicker()" << model->getOptionsModel()->getDisplayTicker();
+        displayTickerChanged(model->getOptionsModel()->getDisplayTicker());
+   }
 }
 
 void BitcoinGUI::gotoOverviewPage()
@@ -1094,6 +1126,11 @@ void BitcoinGUI::gotoMiningPage()
 void BitcoinGUI::gotoMarketCapPage()
 {
     if (walletFrame) walletFrame->gotoMarketCapPage();
+}
+
+void BitcoinGUI::gotoZillionGridPage()
+{
+    if (walletFrame) walletFrame->gotoZillionGridPage();
 }
 
 void BitcoinGUI::setNumConnections(int count)
@@ -1370,8 +1407,26 @@ bool BitcoinGUI::eventFilter(QObject *object, QEvent *event)
 
 void BitcoinGUI::resizeEvent(QResizeEvent *event)
 {
+    //Pos check
+
+    if(ticker_enabled == -1){
+        guiHeader->move(0,0+MENU_OFFSET);
+        tickerHeader->setVisible(false);
+        zillionTab->move(4,4+120+MENU_OFFSET);
+        walletFrame->move(180+4,4+160+MENU_OFFSET);//+90);
+        sideBarContainer->move(0,-10+4+160+MENU_OFFSET);//+90);
+    }else{
+        guiHeader->move(0,20+MENU_OFFSET);
+        zillionTab->move(4,4+120+20+MENU_OFFSET);
+        walletFrame->move(180+4,4+160+20+MENU_OFFSET);//+90);
+        sideBarContainer->move(0,-10+4+160+20+MENU_OFFSET);//+90);
+        tickerHeader->setVisible(true);
+    }
+
     tickerHeader->resize(this->width(),20);
     guiHeader->resize(this->width());
+
+    //qDebug() << tickerHeader->height() << guiHeader->height();
 
 
     zillionTab->resize(this->width()-8,this->height()-180+3);
@@ -1558,6 +1613,11 @@ void BitcoinGUI::menuClicked(int index, int index2)
         if(index == 2){
             if(index2 == 0){
                 gotoMarketCapPage();
+            }
+        }
+        if(index == 3){
+            if(index2 == 0){
+                gotoZillionGridPage();
             }
         }
     }

@@ -113,6 +113,9 @@ public:
     QFrame *marketOverview;
     QLabel *marketTitle;
 
+    QFrame *gridOverview;
+    QLabel *gridTitle;
+
     QWidget *recentOverviewCol[3];
     QVBoxLayout *recentColLayout[3];
     ClickableLabel *recentLabel[3][3];
@@ -135,6 +138,8 @@ public slots:
 
     void updateCSS();
 
+    void sendSimpleGridData(QStringList stringList);
+
 signals:
     void transactionClicked2(const QModelIndex &index);
     void transactionClicked(int index);
@@ -154,6 +159,7 @@ private:
     QLabel *decoRecent;
     QLabel *decoNetwork;
     QLabel *decoMarket;
+    QLabel *decoGrid;
 
     //QWidgetAdvanced *walletOverviewBox;
 
@@ -180,6 +186,27 @@ private:
     QLabel *totalMarketCap;
     QLabel *totalVolume24h;
     QLabel *bearBull;
+
+    QLabel *classTypeTitle;
+    QLabel *serversCountTitle;
+    QLabel *ramTotalTitle;
+    QLabel *totalStorageTitle;
+
+    QLabel *gridLabelA0;
+    QLabel *gridLabelB0;
+    QLabel *gridLabelC0;
+
+    QLabel *gridLabelA1;
+    QLabel *gridLabelB1;
+    QLabel *gridLabelC1;
+
+    QLabel *gridLabelA2;
+    QLabel *gridLabelB2;
+    QLabel *gridLabelC2;
+
+    QLabel *gridLabelA3;
+    QLabel *gridLabelB3;
+    QLabel *gridLabelC3;
 
 
     int unit;

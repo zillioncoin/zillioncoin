@@ -156,6 +156,11 @@ void WalletFrame::gotoMarketCapPage()
     walletStack->gotoMarketCapPage();
 }
 
+void WalletFrame::gotoZillionGridPage()
+{
+    walletStack->gotoZillionGridPage();
+}
+
 void WalletFrame::gotoSignMessageTab(QString addr)
 {
     WalletView *walletView = currentWalletView();

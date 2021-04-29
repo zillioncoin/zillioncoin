@@ -65,7 +65,7 @@ void QRCodeDialog::genCode()
             return;
         }
         myImage = QImage(code->width + 8, code->width + 8, QImage::Format_RGB32);
-        myImage.fill(0xffffff);
+        myImage.fill(0xff0000);
         unsigned char *p = code->data;
         for (int y = 0; y < code->width; y++)
         {

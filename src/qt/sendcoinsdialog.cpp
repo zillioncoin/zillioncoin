@@ -20,6 +20,8 @@
 
 #include "pixmapeffect.h"
 
+#include <QDebug>
+
 SendCoinsDialog::SendCoinsDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SendCoinsDialog),
@@ -107,6 +109,8 @@ void SendCoinsDialog::setModel(WalletModel *model)
         connect(model->getOptionsModel(), SIGNAL(transactionFeeChanged(qint64)), this, SLOT(coinControlUpdateLabels()));
         ui->frameCoinControl->setVisible(model->getOptionsModel()->getCoinControlFeatures());
         coinControlUpdateLabels();
+
+        qDebug() << "this is ticker state" << model->getOptionsModel()->getDisplayTicker();
     }
 }
 

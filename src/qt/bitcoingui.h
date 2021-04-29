@@ -119,9 +119,9 @@ public:
     QList<QLabel*> mainMenuIconLabel;
     QList<QLabel*> mainMenuTextLabel;
 
-    AdvancedWidget *subMenu[3][10];
-    QLabel *subMenuIconLabel[3][10];
-    QLabel *subMenuTextLabel[3][10];
+    AdvancedWidget *subMenu[4][10];
+    QLabel *subMenuIconLabel[4][10];
+    QLabel *subMenuTextLabel[4][10];
 
 
     //
@@ -141,6 +141,7 @@ public:
 
     GuiHeader *guiHeader;
     TickerHeader *tickerHeader;
+    int ticker_enabled;
 
     /** FadeIn/Out Wallet Buttons */
     //void fadeWalletButtons(QString way);
@@ -154,6 +155,9 @@ public:
 
     QSystemTrayIcon *trayIcon;
 
+    //for ticker disabling:
+    void setWalletModel(WalletModel *model);
+
 protected:
     void changeEvent(QEvent *e);
     void closeEvent(QCloseEvent *event);
@@ -165,6 +169,9 @@ protected:
 private:
     ClientModel *clientModel;
     WalletFrame *walletFrame;
+
+    //for ticker disabling:
+    WalletModel *walletModel;
 
     //QWidget *zillionTabCarrier;
     QWidget *backGround;
@@ -302,10 +309,16 @@ public slots:
     /** Switch to marketcap page */
     void gotoMarketCapPage();
 
+    /** Switch to zilliongrid page */
+    void gotoZillionGridPage();
+
     /** Show configuration dialog */
     void optionsClicked();
 
     void whichTabWasClicked(int);
+
+    //to disable ticker:
+    void displayTickerChanged(bool b);
 
 private slots:
 

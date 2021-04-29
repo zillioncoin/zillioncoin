@@ -70,11 +70,13 @@
         <file alias="forward">res/icons/forward.png</file>
         <file alias="player_play_button">res/icons/player_play_button.png</file>
         <file alias="player_stop_button">res/icons/player_stop_button.png</file>
+        <file alias="grid">res/icons/grid.png</file>
     </qresource>
     <qresource prefix="/images">
-        <file alias="about">res/images/about.png</file>
+        <file alias="map">res/images/about.png</file>
         <file alias="splash">res/images/splash.png</file>
         <file alias="splash_testnet">res/images/splash_testnet.png</file>
+        <file>res/images/map.png</file>
     </qresource>
     <qresource prefix="/movies">
         <file alias="update_spinner">res/movies/update_spinner.mng</file>

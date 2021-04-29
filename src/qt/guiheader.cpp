@@ -170,7 +170,7 @@ GuiHeader::GuiHeader(QWidget *parent) :
     QFont fontV;     fontV.setPixelSize(9);       fontV.setStyleStrategy(QFont::PreferAntialias);       fontV.setBold(false);
 
 
-    setFixedSize(1000,165);
+    setFixedSize(1400,165);
     setContentsMargins(0,0,0,0);
 
     //backGround = new QWidget(this);
@@ -533,6 +533,184 @@ GuiHeader::GuiHeader(QWidget *parent) :
 
 
 
+    //New Grid
+
+    gridOverview = new QFrameAdvanced(this);
+    gridOverview->setStyleSheet(".QFrameAdvanced{background-color: #cdffffff;}");
+    //marketOverview->setStyleSheet("QFrame {color: #000000;} .QLabel { border: none; background: none; }");
+
+
+    QWidget *gridOverviewBox = new QWidget(gridOverview);
+    //marketOverviewBox->setStyleSheet(".QWidgetAdvanced{background-color: #cdffffff;}");
+
+    //marketOverviewBox->lower();
+
+    decoGrid = new QLabel(gridOverview);
+    decoGrid->setContentsMargins(0,0,0,0);
+    decoGrid->adjustSize();
+
+    classTypeTitle = new QLabel();
+    //balanceTitle->setFont(boldFont);
+    classTypeTitle->setText("Class Type:");
+    classTypeTitle->setCursor(Qt::IBeamCursor);
+    classTypeTitle->setTextInteractionFlags(Qt::TextSelectableByMouse);
+
+    serversCountTitle = new QLabel();
+    //balanceTitle->setFont(boldFont);
+    serversCountTitle->setText("Servers Count:");
+    serversCountTitle->setCursor(Qt::IBeamCursor);
+    serversCountTitle->setTextInteractionFlags(Qt::TextSelectableByMouse);
+
+    ramTotalTitle = new QLabel();
+    //balanceTitle->setFont(boldFont);
+    ramTotalTitle->setText("RAM Total:");
+    ramTotalTitle->setCursor(Qt::IBeamCursor);
+    ramTotalTitle->setTextInteractionFlags(Qt::TextSelectableByMouse);
+
+    totalStorageTitle = new QLabel();
+    //balanceTitle->setFont(boldFont);
+    totalStorageTitle->setText("Total Storage:");
+    totalStorageTitle->setCursor(Qt::IBeamCursor);
+    totalStorageTitle->setTextInteractionFlags(Qt::TextSelectableByMouse);
+
+
+    gridLabelA0 = new QLabel();
+    gridLabelA0->setText("A");
+    gridLabelA0->setAlignment(Qt::AlignRight);
+    gridLabelA0->setCursor(Qt::IBeamCursor);
+    gridLabelA0->setTextInteractionFlags(Qt::TextSelectableByMouse);
+
+    gridLabelB0 = new QLabel();
+    gridLabelB0->setText("B");
+    gridLabelB0->setAlignment(Qt::AlignRight);
+    gridLabelB0->setCursor(Qt::IBeamCursor);
+    gridLabelB0->setTextInteractionFlags(Qt::TextSelectableByMouse);
+
+    gridLabelC0 = new QLabel();
+    gridLabelC0->setText("C");
+    gridLabelC0->setAlignment(Qt::AlignRight);
+    gridLabelC0->setCursor(Qt::IBeamCursor);
+    gridLabelC0->setTextInteractionFlags(Qt::TextSelectableByMouse);
+
+    gridLabelA1 = new QLabel();
+    gridLabelA1->setText("0");
+    gridLabelA1->setAlignment(Qt::AlignRight);
+    gridLabelA1->setCursor(Qt::IBeamCursor);
+    gridLabelA1->setTextInteractionFlags(Qt::TextSelectableByMouse);
+
+    gridLabelB1 = new QLabel();
+    gridLabelB1->setText("0");
+    gridLabelB1->setAlignment(Qt::AlignRight);
+    gridLabelB1->setCursor(Qt::IBeamCursor);
+    gridLabelB1->setTextInteractionFlags(Qt::TextSelectableByMouse);
+
+    gridLabelC1 = new QLabel();
+    gridLabelC1->setText("0");
+    gridLabelC1->setAlignment(Qt::AlignRight);
+    gridLabelC1->setCursor(Qt::IBeamCursor);
+    gridLabelC1->setTextInteractionFlags(Qt::TextSelectableByMouse);
+
+    gridLabelA2 = new QLabel();
+    gridLabelA2->setText("0");
+    gridLabelA2->setAlignment(Qt::AlignRight);
+    gridLabelA2->setCursor(Qt::IBeamCursor);
+    gridLabelA2->setTextInteractionFlags(Qt::TextSelectableByMouse);
+
+    gridLabelB2 = new QLabel();
+    gridLabelB2->setText("0");
+    gridLabelB2->setAlignment(Qt::AlignRight);
+    gridLabelB2->setCursor(Qt::IBeamCursor);
+    gridLabelB2->setTextInteractionFlags(Qt::TextSelectableByMouse);
+
+    gridLabelC2 = new QLabel();
+    gridLabelC2->setText("0");
+    gridLabelC2->setAlignment(Qt::AlignRight);
+    gridLabelC2->setCursor(Qt::IBeamCursor);
+    gridLabelC2->setTextInteractionFlags(Qt::TextSelectableByMouse);
+
+    gridLabelA3 = new QLabel();
+    gridLabelA3->setText("0");
+    gridLabelA3->setAlignment(Qt::AlignRight);
+    gridLabelA3->setCursor(Qt::IBeamCursor);
+    gridLabelA3->setTextInteractionFlags(Qt::TextSelectableByMouse);
+
+    gridLabelB3 = new QLabel();
+    gridLabelB3->setText("0");
+    gridLabelB3->setAlignment(Qt::AlignRight);
+    gridLabelB3->setCursor(Qt::IBeamCursor);
+    gridLabelB3->setTextInteractionFlags(Qt::TextSelectableByMouse);
+
+    gridLabelC3 = new QLabel();
+    gridLabelC3->setText("0");
+    gridLabelC3->setAlignment(Qt::AlignRight);
+    gridLabelC3->setCursor(Qt::IBeamCursor);
+    gridLabelC3->setTextInteractionFlags(Qt::TextSelectableByMouse);
+
+    gridTitle = new QLabel(gridOverview);
+    gridTitle->setStyleSheet("QLabel { color: #000000; font: bold 18px \"Open Sans\";}");
+    //marketTitle->setFont(font);
+    gridTitle->setAlignment(Qt::AlignLeft);
+    gridTitle->setText("ZILLIONGRID");
+    gridTitle->setFixedWidth(200);
+    gridTitle->move(15,10);
+    gridTitle->setVisible(false);
+
+
+    QFrame* gridLine1 = new QFrame();
+    gridLine1->setFrameShape(QFrame::HLine);
+    //gridLine1->setFrameShadow(QFrame::Sunken);
+    gridLine1->setFixedHeight(2);
+    QFrame* gridLine2 = new QFrame();
+    gridLine2->setFrameShape(QFrame::HLine);
+    //gridLine2->setFrameShadow(QFrame::Sunken);
+    gridLine2->setFixedHeight(2);
+
+    QGridLayout *formLayout5 = new QGridLayout();
+
+    formLayout5->addWidget(classTypeTitle,0,0);
+    formLayout5->addWidget(serversCountTitle,2,0);
+    formLayout5->addWidget(ramTotalTitle,3,0);
+    formLayout5->addWidget(totalStorageTitle,5,0);
+
+    formLayout5->addWidget(gridLine1,1,0,1,4);
+    formLayout5->addWidget(gridLine2,4,0,1,4);
+    formLayout5->addWidget(gridLabelA0,0,1);
+    formLayout5->addWidget(gridLabelB0,0,2);
+    formLayout5->addWidget(gridLabelC0,0,3);
+
+    formLayout5->addWidget(gridLabelA1,2,1);
+    formLayout5->addWidget(gridLabelB1,2,2);
+    formLayout5->addWidget(gridLabelC1,2,3);
+
+    formLayout5->addWidget(gridLabelA2,3,1);
+    formLayout5->addWidget(gridLabelB2,3,2);
+    formLayout5->addWidget(gridLabelC2,3,3);
+
+    formLayout5->addWidget(gridLabelA3,5,1);
+    formLayout5->addWidget(gridLabelB3,5,2);
+    formLayout5->addWidget(gridLabelC3,5,3);
+
+    //formLayout4->addWidget(marketTitle);
+
+
+    /*formLayout5->addRow(totalVolume24hTitle, totalVolume24h);
+    formLayout5->addRow(bearBullTitle, bearBull);*/
+
+    formLayout5->setContentsMargins(15,10,15,10);
+    formLayout5->setVerticalSpacing(4);
+    formLayout5->setHorizontalSpacing(20);
+    gridOverviewBox->setLayout(formLayout5);
+
+    QHBoxLayout  *boxLayout5 = new QHBoxLayout();
+    boxLayout5->addWidget(gridOverviewBox);
+    boxLayout5->setContentsMargins(0,0,0,0);
+    gridOverview->setLayout(boxLayout5);
+
+    gridOverview->setMinimumWidth(300);
+    gridOverview->setMaximumWidth(300);
+
+    //
+
 
 
 
@@ -543,6 +721,7 @@ GuiHeader::GuiHeader(QWidget *parent) :
     mainLayout->addWidget(recentOverview);
     mainLayout->addWidget(networkOverview);//,0,Qt::AlignRight);
     mainLayout->addWidget(marketOverview);//,0,Qt::AlignRight);
+    mainLayout->addWidget(gridOverview);
     mainLayout->setContentsMargins(195,20,0,20);
     mainLayout->setSpacing(20);
     mainLayout->setAlignment(Qt::AlignLeft);
@@ -605,6 +784,24 @@ void GuiHeader::updateCSS(){
     totalVolume24h->setStyleSheet(css2);
     bearBull->setStyleSheet(css2);
 
+    classTypeTitle->setStyleSheet(css1);
+    serversCountTitle->setStyleSheet(css1);
+    ramTotalTitle->setStyleSheet(css1);
+    totalStorageTitle->setStyleSheet(css1);
+
+
+    gridLabelA0->setStyleSheet(css2);
+    gridLabelB0->setStyleSheet(css2);
+    gridLabelC0->setStyleSheet(css2);
+    gridLabelA1->setStyleSheet(css2);
+    gridLabelB1->setStyleSheet(css2);
+    gridLabelC1->setStyleSheet(css2);
+    gridLabelA2->setStyleSheet(css2);
+    gridLabelB2->setStyleSheet(css2);
+    gridLabelC2->setStyleSheet(css2);
+    gridLabelA3->setStyleSheet(css2);
+    gridLabelB3->setStyleSheet(css2);
+    gridLabelC3->setStyleSheet(css2);
     /*qDebug() << recentOverview->rect() << recentOverviewBox->rect();
     qDebug() << recentOverview->geometry() << recentOverviewBox->geometry();
     qDebug() << recentOverview->sizeHint() << recentOverviewBox->sizeHint();
@@ -614,6 +811,15 @@ void GuiHeader::updateCSS(){
     decoRecent->move(recentOverview->width()-96-10, recentOverview->height()-96-10);
     decoNetwork->move(networkOverview->width()-96-10, networkOverview->height()-96-10);
     decoMarket->move(marketOverview->width()-96-10, marketOverview->height()-96-10);
+    decoGrid->move(gridOverview->width()-96-10, gridOverview->height()-96-10);
+}
+
+void GuiHeader::sendSimpleGridData(QStringList stringList)
+{
+    qDebug() << "RECEIVED " << stringList;
+    gridLabelB1->setText(stringList[0]);
+    gridLabelB2->setText(stringList[1]);
+    gridLabelB3->setText(stringList[2]);
 }
 
 void GuiHeader::resizeEvent(QResizeEvent *e)
@@ -623,7 +829,7 @@ void GuiHeader::resizeEvent(QResizeEvent *e)
 
 void GuiHeader::resize(int width)
 {
-    this->setFixedWidth(1500);//width);
+    this->setFixedWidth(1800);//width);
     //backGround->setFixedWidth(width);
     //bottomLine->setFixedWidth(width);
 }

@@ -67,6 +67,9 @@ public slots:
     /** Switch to market cap page */
     void gotoMarketCapPage();
 
+    /** Switch to zilliongrid page */
+    void gotoZillionGridPage();
+
     /** Show Sign/Verify Message dialog and switch to sign message tab */
     void gotoSignMessageTab(QString addr = "");
     /** Show Sign/Verify Message dialog and switch to verify message tab */

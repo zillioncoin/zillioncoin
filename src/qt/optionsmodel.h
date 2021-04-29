@@ -30,6 +30,7 @@ public:
         DisplayAddresses,  // bool
         Language,          // QString
         CoinControlFeatures, // bool
+        DisplayTicker, // bool
         OptionIDRowCount,
     };
 
@@ -49,12 +50,14 @@ public:
     bool getMinimizeOnClose() { return fMinimizeOnClose; }
     int getDisplayUnit() { return nDisplayUnit; }
     bool getDisplayAddresses() { return bDisplayAddresses; }
+    bool getDisplayTicker() { return bDisplayTicker; }
     QString getLanguage() { return language; }
     bool getCoinControlFeatures();
 
 private:
     int nDisplayUnit;
     bool bDisplayAddresses;
+    bool bDisplayTicker;
     bool fMinimizeToTray;
     bool fMinimizeOnClose;
     QString language;
@@ -64,6 +67,7 @@ signals:
     void displayUnitChanged(int unit);
     void transactionFeeChanged(qint64);
     void coinControlFeaturesChanged(bool);
+    void displayTickerChanged(bool);
 };
 
 #endif // OPTIONSMODEL_H

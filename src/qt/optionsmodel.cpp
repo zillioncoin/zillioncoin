@@ -44,6 +44,7 @@ void OptionsModel::Init()
     // These are Qt-only settings:
     nDisplayUnit = settings.value("nDisplayUnit", BitcoinUnits::BTC).toInt();
     bDisplayAddresses = settings.value("bDisplayAddresses", false).toBool();
+    bDisplayTicker = settings.value("bDisplayTicker", false).toBool();
     fMinimizeToTray = settings.value("fMinimizeToTray", false).toBool();
     fMinimizeOnClose = settings.value("fMinimizeOnClose", false).toBool();
     nTransactionFee = settings.value("nTransactionFee").toLongLong();
@@ -195,6 +196,8 @@ QVariant OptionsModel::data(const QModelIndex & index, int role) const
             return QVariant(nDisplayUnit);
         case DisplayAddresses:
             return QVariant(bDisplayAddresses);
+        case DisplayTicker:
+            return QVariant(bDisplayTicker);
         case Language:
             return settings.value("language", "");
         case CoinControlFeatures:
@@ -277,6 +280,11 @@ bool OptionsModel::setData(const QModelIndex & index, const QVariant & value, in
         case DisplayAddresses:
             bDisplayAddresses = value.toBool();
             settings.setValue("bDisplayAddresses", bDisplayAddresses);
+            break;
+        case DisplayTicker:
+            bDisplayTicker = value.toBool();
+            settings.setValue("bDisplayTicker", bDisplayTicker);
+            emit displayTickerChanged(bDisplayTicker);
             break;
         case Language:
             settings.setValue("language", value);
